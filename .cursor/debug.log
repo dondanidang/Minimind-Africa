@@ -1,0 +1,140 @@
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686078605,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686078613,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686078598,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686078612,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686078836,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686078968,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686084030,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686084026,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686084025,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686084196,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686084196,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"lib/supabase/server.ts:29","message":"Supabase client created successfully","data":{"clientExists":true},"timestamp":1766686096069,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686096070,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686096065,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686096066,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"lib/supabase/server.ts:4","message":"createClient entry","data":{"hasUrl":true,"urlLength":40,"hasKey":true,"keyLength":46},"timestamp":1766686096067,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686096251,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686096251,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"lib/supabase/server.ts:29","message":"Supabase client created successfully","data":{"clientExists":true},"timestamp":1766686109615,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686109616,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"lib/supabase/server.ts:4","message":"createClient entry","data":{"hasUrl":true,"urlLength":40,"hasKey":true,"keyLength":46},"timestamp":1766686109612,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686109612,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686109612,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686109768,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686109769,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"lib/supabase/server.ts:29","message":"Supabase client created successfully","data":{"clientExists":true},"timestamp":1766686120178,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686120179,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"lib/supabase/server.ts:29","message":"Supabase client created successfully","data":{"clientExists":true},"timestamp":1766686120183,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686120184,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686120172,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686120173,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"lib/supabase/server.ts:4","message":"createClient entry","data":{"hasUrl":true,"urlLength":40,"hasKey":true,"keyLength":46},"timestamp":1766686120173,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686120182,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686120182,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"lib/supabase/server.ts:4","message":"createClient entry","data":{"hasUrl":true,"urlLength":40,"hasKey":true,"keyLength":46},"timestamp":1766686120182,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686120355,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686120356,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686120356,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686120356,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"lib/supabase/server.ts:29","message":"Supabase client created successfully","data":{"clientExists":true},"timestamp":1766686426281,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686426282,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686426277,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686426277,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"lib/supabase/server.ts:4","message":"createClient entry","data":{"hasUrl":true,"urlLength":40,"hasKey":true,"keyLength":46},"timestamp":1766686426277,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686426747,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686426747,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"lib/supabase/server.ts:29","message":"Supabase client created successfully","data":{"clientExists":true},"timestamp":1766686445380,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686445381,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686445379,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686445380,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"lib/supabase/server.ts:4","message":"createClient entry","data":{"hasUrl":true,"urlLength":40,"hasKey":true,"keyLength":46},"timestamp":1766686445380,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686445528,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686445529,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"lib/supabase/server.ts:29","message":"Supabase client created successfully","data":{"clientExists":true},"timestamp":1766686501908,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686501909,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"lib/supabase/server.ts:29","message":"Supabase client created successfully","data":{"clientExists":true},"timestamp":1766686501915,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:10","message":"Supabase client created","data":{"clientExists":true},"timestamp":1766686501915,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686501902,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686501903,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"lib/supabase/server.ts:4","message":"createClient entry","data":{"hasUrl":true,"urlLength":40,"hasKey":true,"keyLength":46},"timestamp":1766686501903,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:33","message":"HomePage component entry","data":{},"timestamp":1766686501913,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:7","message":"getFeaturedProducts entry","data":{"hasUrl":true,"hasKey":true},"timestamp":1766686501914,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"lib/supabase/server.ts:4","message":"createClient entry","data":{"hasUrl":true,"urlLength":40,"hasKey":true,"keyLength":46},"timestamp":1766686501914,"sessionId":"debug-session","runId":"run1","hypothesisId":"A"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686502251,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686502251,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"app/page.tsx:18","message":"Database query completed","data":{"hasData":true,"dataLength":1,"hasError":false,"errorMessage":null,"errorCode":null},"timestamp":1766686502271,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"app/page.tsx:36","message":"Featured products fetched","data":{"count":1},"timestamp":1766686502272,"sessionId":"debug-session","runId":"run1","hypothesisId":"E"}
+{"location":"Header.tsx:15","message":"Component mounted","data":{"logoError":false,"mounted":false},"timestamp":1766693118599,"sessionId":"debug-session","runId":"run1","hypothesisId":"A,B,C"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":false},"timestamp":1766693118600,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:15","message":"Component mounted","data":{"logoError":false,"mounted":false},"timestamp":1766693118601,"sessionId":"debug-session","runId":"run1","hypothesisId":"A,B,C"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":true},"timestamp":1766693118603,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":false},"timestamp":1766693118601,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":true,"mounted":true},"timestamp":1766693118922,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693121268,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693121270,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693121290,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693121291,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693121510,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693121510,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693128749,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693128749,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693128750,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693128750,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693129008,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693129008,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693129009,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693129009,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693129195,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693129195,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:52","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693129196,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693129196,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693169680,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693169681,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693169681,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693169681,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693169718,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693169718,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693169719,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693169719,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693170003,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693170003,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693170004,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693170004,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693177416,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693177417,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693177418,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693177419,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693177451,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693177451,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693177451,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693177451,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693177679,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693177680,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693177681,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693177681,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693192657,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693192657,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693192657,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693192657,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693192893,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693192893,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693192894,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693192895,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:15","message":"Component mounted","data":{"logoError":false,"mounted":false},"timestamp":1766693357961,"sessionId":"debug-session","runId":"run1","hypothesisId":"A,B,C"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":false},"timestamp":1766693357961,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:15","message":"Component mounted","data":{"logoError":false,"mounted":false},"timestamp":1766693357962,"sessionId":"debug-session","runId":"run1","hypothesisId":"A,B,C"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":false},"timestamp":1766693357963,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":true},"timestamp":1766693357966,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:110","message":"Mobile logo onError fired","data":{"src":"/logo.png","logoErrorBefore":false},"timestamp":1766693357994,"sessionId":"debug-session","runId":"run1","hypothesisId":"A,B,C"}
+{"location":"Header.tsx:42","message":"Desktop logo onError fired","data":{"src":"/logo.png","logoErrorBefore":false},"timestamp":1766693357995,"sessionId":"debug-session","runId":"run1","hypothesisId":"A,B,C"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693357995,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693357996,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:58","message":"Desktop fallback text rendering","data":{"logoError":true},"timestamp":1766693357996,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:120","message":"Mobile fallback text rendering","data":{"logoError":true},"timestamp":1766693357996,"sessionId":"debug-session","runId":"run1","hypothesisId":"B,E"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":true,"mounted":true},"timestamp":1766693357997,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:15","message":"Component mounted","data":{"logoError":false,"mounted":false},"timestamp":1766693619766,"sessionId":"debug-session","runId":"run1","hypothesisId":"A,B,C"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":false},"timestamp":1766693619766,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:15","message":"Component mounted","data":{"logoError":false,"mounted":false},"timestamp":1766693619768,"sessionId":"debug-session","runId":"run1","hypothesisId":"A,B,C"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":false},"timestamp":1766693619768,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
+{"location":"Header.tsx:23","message":"logoError state changed","data":{"logoError":false,"mounted":true},"timestamp":1766693619772,"sessionId":"debug-session","runId":"run1","hypothesisId":"B"}
