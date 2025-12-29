@@ -65,6 +65,9 @@ export default function PaymentPage() {
 
       const { paymentLink } = await response.json()
       
+      // Clear cart when payment link is created and user is about to pay
+      clearCart()
+      
       // Redirect to Jeko payment page
       window.location.href = paymentLink.link
     } catch (error) {
