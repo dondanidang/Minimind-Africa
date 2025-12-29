@@ -71,13 +71,20 @@ export default async function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary-50 to-white py-20">
-        <div className="container mx-auto px-4">
+      <section 
+        className="relative bg-cover bg-center bg-no-repeat w-full py-32"
+        style={{
+          backgroundImage: 'url(https://miniminds.africa/cdn/shop/files/MIniminds_Banner_Homepage.png)',
+          minHeight: '600px',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative z-10 container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            <h1 className="text-5xl font-bold text-white mb-4">
               Construisez, Riez, Apprenez
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-white mb-8">
               Chaque moment de jeu devient une aventure éducative sans écrans
             </p>
             <Link href="/products">
