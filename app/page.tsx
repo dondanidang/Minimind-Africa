@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { ProductCard } from '@/components/product/ProductCard'
+import { HomeTestimonialsCarousel } from '@/components/home/HomeTestimonialsCarousel'
 import { createClient } from '@/lib/supabase/server'
 import type { Product } from '@/types/product'
+import type { Review } from '@/types/review'
 
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
@@ -25,8 +27,46 @@ async function getFeaturedProducts(): Promise<Product[]> {
   }
 }
 
+async function getRandomReviews(limit: number = 5): Promise<Review[]> {
+  try {
+    const supabase = await createClient()
+    // Fetch reviews - we'll filter and shuffle in JavaScript
+    // Fetch more than needed to ensure we have enough with comments
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('*')
+      .limit(limit * 3) // Fetch more to ensure we have enough with comments
+
+    if (error) {
+      console.error('Error fetching reviews:', error)
+      return []
+    }
+
+    // Filter to only reviews with comments and shuffle
+    const reviewsWithComments = (data as Review[] || []).filter(
+      (review) => review.comment && review.comment.trim().length > 0
+    )
+
+    // Shuffle array using Fisher-Yates algorithm
+    const shuffled = [...reviewsWithComments]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+
+    // Return only the requested limit
+    return shuffled.slice(0, limit)
+  } catch (err: any) {
+    console.error('Error fetching reviews:', err)
+    return []
+  }
+}
+
 export default async function HomePage() {
-  const featuredProducts = await getFeaturedProducts()
+  const [featuredProducts, reviews] = await Promise.all([
+    getFeaturedProducts(),
+    getRandomReviews(5),
+  ])
 
   return (
     <div>
@@ -63,20 +103,6 @@ export default async function HomePage() {
                 <Button size="lg">Découvrez notre Produit Vedette</Button>
               </Link>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { title: 'Développement cognitif', icon: '🧠' },
-              { title: 'Motricité fine', icon: '✋' },
-              { title: 'Créativité sans limites', icon: '✨' },
-              { title: 'Confiance en soi', icon: '🌟' },
-            ].map((feature, index) => (
-              <div key={index} className="text-center p-6">
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="font-semibold text-lg">{feature.title}</h3>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -119,38 +145,9 @@ export default async function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Déjà +500 Parents Satisfaits
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                name: 'Aminata K',
-                location: 'Cocody',
-                text: 'Mon fils de 5 ans adore ! Il passe des heures à créer. Un excellent jeu éducatif.',
-              },
-              {
-                name: 'Jean-Marc D',
-                location: 'Plateau',
-                text: 'Qualité au top, livraison rapide. Ma fille développe vraiment sa créativité.',
-              },
-              {
-                name: 'Fatou S',
-                location: 'Yopougon',
-                text: 'Le meilleur achat pour mes enfants. Ils apprennent sans s\'en rendre compte.',
-              },
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-gray-700 mb-4">"{testimonial.text}"</p>
-                <p className="font-semibold">{testimonial.name}</p>
-                <p className="text-sm text-gray-600">- {testimonial.location}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {reviews.length > 0 && (
+        <HomeTestimonialsCarousel reviews={reviews} />
+      )}
 
       {/* CTA Section */}
       <section className="py-16 bg-primary-600 text-white">

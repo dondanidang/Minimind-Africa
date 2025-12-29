@@ -1,0 +1,175 @@
+{
+  "urgencyCount": 15,
+  "mainFeatures": [
+    { "icon": "🧘‍♀️", "label": "Favorise le calme et la concentration" },
+    { "icon": "✈️", "label": "À emporter partout, sans contrainte" }
+  ],
+  "idealFeatures": {
+    "title": "Custom Title",
+    "features": [
+      {
+        "icon": "✓",
+        "title": "Zéro écran, zéro pile",
+        "description": "Un jeu calme, sans bruit ni surexcitation. Loin des écrans, il recentre l’enfant sur l’essentiel : le plaisir simple, la concentration, la créativité."
+      },
+      {
+        "icon": "✓",
+        "title": "Un jeu pour tous",
+        "description": "Dès 3 ans, enfants, parents, frères et sœurs jouent ensemble. Un vrai jeu intergénérationnel à partager en famille"
+      },
+      {
+        "icon": "✓",
+        "title": "Apprentissage actif",
+        "description": "Motricité, logique, coopération… Chaque partie développe des compétences clés, sans que l’enfant s’en rende compte."
+      },
+      {
+        "icon": "✓",
+        "title": "Solide et durable",
+        "description": "Fabriqué en ABS premium, il résiste aux chutes et dure des années. Un jouet à transmettre, pas à jeter."
+      },
+      {
+        "icon": "✓",
+        "title": "100 idées, 1 seul jeu",
+        "description": "Un seul jeu = des dizaines de façons de jouer. Pas besoin d’en acheter 10 : il évolue avec l’enfant et ne lasse jamais."
+      },
+      {
+        "icon": "✓",
+        "title": "À emporter partout",
+        "description": "Compact, léger, sans pile ni bruit : le jeu parfait à glisser dans un sac pour occuper les enfants au resto, chez les grands-parents ou en voyage."
+      }
+    ]
+  },
+  "video": {
+    "url": "https://miniminds.africa/cdn/shop/videos/c/vp/06c17f640fb54173800f925c1d442100/06c17f640fb54173800f925c1d442100.HD-1080p-7.2Mbps-64008249.mp4",
+    "title": "Inclus dans la boite"
+  },
+  "scrollingBanner": {
+    "texts": [
+      "Apprendre en s’amusant, grandir en créant.",
+      "D’autres jouets amusent. Nos jouets font fait grandir.",
+      "Des jeux qui rapprochent, font réfléchir et rendent fiers.",
+      "De petites mains pour de grandes découvertes.",
+      "Apprendre en s’amusant, grandir en créant.",
+      "D’autres jouets amusent. Nos jouets font fait grandir.",
+      "Des jeux qui rapprochent"
+    ],
+    "speed": 70
+  },
+  "zigzagContent": [
+    {
+      "image": "https://miniminds.africa/cdn/shop/files/Tour_Tetra_6.png",
+      "title": "Un entraînement pour le cerveau… déguisé en fou rire",
+      "description": "Chaque pièce que vous empilez demande attention, logique et contrôle. Mais vos enfants ne s’en rendent même pas compte. Ils s’amusent. Ils rient. Ils recommencent. Et pendant ce temps, ils renforcent leur coordination, leur patience, leur capacité à résoudre des problèmes. C’est un jouet. Mais aussi une gym cérébrale en douce. Et le meilleur ? Même les adultes se prennent au jeu — en oubliant le stress de la journée.",
+      "alignment": "left"
+    },
+    {
+      "image": "https://miniminds.africa/cdn/shop/files/Tour_Tetra_1.png",
+      "title": "Un jeu qui rassemble toutes les générations (sans les écrans)",
+      "description": "C’est rare aujourd’hui. Un jeu sans batterie, sans écran, sans notifications.Juste des mains qui s’activent, des regards qui se croisent, des sourires qui fusent. Que vous soyez parents, enfants, grands-parents ou amis de passage : ce jeu met tout le monde à égalité. Facile à apprendre, difficile à maîtriser et addictif à souhait. C’est ce moment de partage vrai que vous n’avez pas vu depuis longtemps à la maison.",
+      "alignment": "right"
+    },
+    {
+      "image": "https://miniminds.africa/cdn/shop/files/Tour_Tetra_5.png",
+      "title": "Solide, sûr et fait pour durer — même après 100 chutes",
+      "description": "La frustration des jouets qui cassent au bout de 3 jours ? Oubliez. Ce jeu est fabriqué en plastique ABS haute densité, le même utilisé dans les LEGO®. Zéro arête tranchante. Zéro produit toxique. 100 % sécurisé, même pour les plus petits. Chaque pièce est conçue pour résister aux chocs, à la pression, aux lancers accidentels… et aux crises de fou rire incontrôlables. Bref : c’est un jeu fait pour durer. Et pour vivre des souvenirs inoubliables.",
+      "alignment": "left"
+    }
+  ],
+  "comparisonTable": {
+    "title": "Ce qu’on vous garantit",
+    "subtitle": "(et pourquoi vous pouvez le commander les yeux fermés)",
+    "rows": [
+      { "feature": "Solidité & sécurité", "ourGame": true, "otherToys": false },
+      { "feature": "Durabilité", "ourGame": true, "otherToys": false },
+      { "feature": "Adapté dès 3 ans", "ourGame": true, "otherToys": false },
+      { "feature": "Sans bruits perturbateurs", "ourGame": true, "otherToys": false },
+      { "feature": "Évolue avec l’enfant", "ourGame": true, "otherToys": false }
+    ]
+  },
+  "guarantees": {
+    "title": "Les Garanties Que l'on Propose",
+    "items": [
+      {
+        "icon": "🚚",
+        "title": "Livraison Gratuite",
+        "subtitle": "La livraison est gratuite partout à Abidjan"
+      },
+      {
+        "icon": "📦",
+        "title": "Satisfaction 7 jours",
+        "subtitle": "Retournez votre article sous 7 jours si besoin"
+      },
+      {
+        "icon": "📞",
+        "title": "Service Client à l'écoute",
+        "subtitle": "Une question? On est dispo du lundi au vendredi"
+      }
+    ]
+  },
+  "faqs": {
+    "title": "Questions Fréquentes",
+    "items": [
+      {
+        "question": "Je ne suis pas sûr que ce jeu tienne dans le temps, les blocs vont se casser rapidement",
+        "answer": "Les blocs sont conçus dans un plastique ABS haute densité utilisé dans les jouets éducatifs professionnels : résistant aux chocs, durable, sans risque de fissure même après des centaines de chutes"
+      },
+      {
+        "question": "Est-ce que le jeu est vraiment fun pour des adultes — ou c'est juste pour les enfants ?",
+        "answer": "Conçu pour toutes les générations : testé en team building, soirées jeux, apéros — et adoré par les adultes (surtout à partir du 3e round 😄)."
+      },
+      {
+        "question": "Le jeu va‑t‑il vraiment développer des compétences utiles ou juste faire perdre du temps ?",
+        "answer": "Coordination, patience, logique, travail en équipe, gestion du stress… C'est une école de la stratégie ludique, pas juste un passe-temps."
+      },
+      {
+        "question": "Est-ce que c'est un bon cadeau ou juste un gadget qu'on oublie vite ?",
+        "answer": "C'est LE cadeau inattendu qui fait mouche. Une activité réelle dans un monde saturé d'écrans. Il surprend, amuse et rassemble."
+      },
+      {
+        "question": "Est-ce facile à ranger / à transporter si je veux l'emmener en voyage ?",
+        "answer": "Fourni avec un sac de rangement compact. Tu peux l'emmener partout : vacances, week-end, soirée chez des potes."
+      },
+      {
+        "question": "Est‑ce que c'est éducatif ou vraiment juste un jeu d'équilibre ?",
+        "answer": "Éducatif ET fun. Il entraîne la motricité fine, la concentration, la créativité, et même la visualisation spatiale."
+      },
+      {
+        "question": "Pourquoi les parents ivoiriens l'adorent ?",
+        "answer": "Parce qu'il reflète leurs valeurs : éducation, famille et partage. Les parents ivoiriens adorent nos jouets pour leur simplicité, leur qualité et le fait qu'il crée de vrais moments de complicité avec leurs enfants."
+      },
+      {
+        "question": "Combien de temps prend la livraison ?",
+        "answer": "📦 Abidjan : livraison sous 24 à 48 heures. 🛵 Grand Bassam, Bingerville, Anyama : 48 à 72 heures maximum. Nos livreurs vous contactent par téléphone avant la livraison pour confirmer l'adresse exacte."
+      },
+      {
+        "question": "Et si je commande et que ça ne me plaît pas — est‑ce facile de retourner ?",
+        "answer": "Aucun risque : tu essaies pendant 07 jours. Si tu n'es pas fan, tu nous renvoies le tout et tu es remboursé sans discussion."
+      }
+    ]
+  },
+  "whyThisGame": {
+    "title": "TOUR TETRA™— Pourquoi ce jeu vaut mille fois plus qu’un jouet électronique",
+    "items": [
+        {
+            "title": "Des compétences motrices pour toute une vie",
+            "description": "Contrairement aux jeux vidéo ou aux jouets « tout‑prêts », ce jeu développe la **motricité fine**, la **coordination main‑œil** et la **logique**. En empilant les pièces, l'enfant apprend naturellement à équilibrer, ajuster et anticiper. Des compétences essentielles dès le plus jeune âge, qui lui servent bien au‑delà du jeu.",
+          },
+          {
+            "title": "Un tremplin pour l'imagination et la pensée critique",
+            "description": "Ici, pas d'écran, pas de scénario imposé. L'enfant est libre de créer ses propres défis, d'expérimenter, de recommencer autrement. Chaque partie devient une nouvelle aventure, stimulant **la créativité**, **l'imagination** et **la réflexion autonome**. Le jeu s'adapte à l'enfant… pas l'inverse.",
+          },
+          {
+            "title": "Un cerveau en pleine construction… tout en jouant",
+            "description": "Chaque pièce posée est une mini‑expérience. L'enfant découvre par lui‑même les notions de **forme**, **poids**, **équilibre**, **proportion** et **gravité**. En construisant, il expérimente, se trompe, corrige — un processus clé du **développement cognitif**, rendu ludique et naturel.",
+          },
+          {
+            "title": "Un jeu qui évolue avec l'enfant, pas un gadget éphémère",
+            "description": "Dès 3 ans, le jeu commence simplement. Puis, au fil des années, les défis deviennent plus complexes, plus créatifs, plus stratégiques. Ce n'est pas un jouet que l'on délaisse après quelques semaines, mais un **jeu durable** qui accompagne l'enfant dans sa croissance, sa concentration et sa confiance en lui.",
+          },
+          {
+            "title": "Créer des souvenirs, pas juste du divertissement",
+            "description": "Ce jeu ne se joue pas uniquement seul. Il rassemble. Autour de la table, enfants, parents et grands‑parents partagent des moments de rire, de tension joyeuse et de fierté quand la tour tient debout. Ces instants renforcent la **coopération**, l'**estime de soi**, l'**autonomie**… et créent des souvenirs qui restent.",
+          }
+        ]
+  }
+}
