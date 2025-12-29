@@ -17,21 +17,6 @@ export function PaymentMethod({ selectedMethod, onMethodChange }: PaymentMethodP
           <input
             type="radio"
             name="payment_method"
-            value="cash_on_delivery"
-            checked={selectedMethod === 'cash_on_delivery'}
-            onChange={() => onMethodChange('cash_on_delivery')}
-            className="w-4 h-4 text-primary-600"
-          />
-          <div className="flex-1">
-            <p className="font-medium">Paiement à la livraison</p>
-            <p className="text-sm text-gray-600">Payez en espèces à la livraison</p>
-          </div>
-        </label>
-        
-        <label className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
-          <input
-            type="radio"
-            name="payment_method"
             value="mobile_money"
             checked={selectedMethod === 'mobile_money'}
             onChange={() => onMethodChange('mobile_money')}
@@ -39,7 +24,7 @@ export function PaymentMethod({ selectedMethod, onMethodChange }: PaymentMethodP
           />
           <div className="flex-1">
             <p className="font-medium">Mobile Money</p>
-            <p className="text-sm text-gray-600">Orange Money, MTN Mobile Money</p>
+            <p className="text-sm text-gray-600">Orange Money, Djamo, MTN Money, Moov, Wave</p>
           </div>
         </label>
       </div>

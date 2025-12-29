@@ -23,7 +23,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const items = useCartStore(state => state.items)
   const clearCart = useCartStore(state => state.clearCart)
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('cash_on_delivery')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('mobile_money')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (formData: CheckoutFormData) => {

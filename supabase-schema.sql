@@ -142,22 +142,33 @@ CREATE POLICY "Users can delete own cart items" ON cart_items
     session_id = current_setting('app.session_id', true)
   );
 
--- Orders: Users can view their own orders
+-- Orders: Allow viewing own orders
 CREATE POLICY "Users can view own orders" ON orders
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT USING (
+    (user_id IS NOT NULL AND auth.uid() = user_id) OR
+    (user_id IS NULL)
+  );
 
-CREATE POLICY "Users can create own orders" ON orders
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+-- Orders: Allow creating orders (for server-side API with proper validation)
+CREATE POLICY "Allow order creation" ON orders
+  FOR INSERT WITH CHECK (true);
 
--- Order items: Users can view items from their own orders
+-- Order items: Allow viewing items from own orders
 CREATE POLICY "Users can view own order items" ON order_items
   FOR SELECT USING (
     EXISTS (
       SELECT 1 FROM orders 
       WHERE orders.id = order_items.order_id 
-      AND orders.user_id = auth.uid()
+      AND (
+        (orders.user_id IS NOT NULL AND orders.user_id = auth.uid()) OR
+        (orders.user_id IS NULL)
+      )
     )
   );
+
+-- Order items: Allow inserting items for orders
+CREATE POLICY "Allow order items creation" ON order_items
+  FOR INSERT WITH CHECK (true);
 
 -- Reviews: Public read, authenticated write
 CREATE POLICY "Reviews are viewable by everyone" ON reviews

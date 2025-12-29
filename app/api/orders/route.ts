@@ -22,9 +22,17 @@ export async function POST(request: Request) {
       payment_method,
     } = body
 
+    // Validate required fields
+    if (!customer_email || !items || !Array.isArray(items) || items.length === 0) {
+      return NextResponse.json(
+        { error: 'Missing required fields: customer_email and items are required' },
+        { status: 400 }
+      )
+    }
+
     // Calculate total
     const total = items.reduce((sum: number, item: any) => {
-      return sum + item.product_price * item.quantity
+      return sum + (item.product_price || 0) * (item.quantity || 0)
     }, 0)
 
     // Get user if authenticated
@@ -38,11 +46,11 @@ export async function POST(request: Request) {
         order_number: orderNumber,
         user_id: user?.id || null,
         customer_email,
-        customer_name,
-        customer_phone,
-        shipping_address,
+        customer_name: customer_name || null,
+        customer_phone: customer_phone || null,
+        shipping_address: shipping_address || null,
         total,
-        payment_method,
+        payment_method: payment_method || null,
         status: 'pending',
         payment_status: 'pending',
       })
@@ -50,8 +58,16 @@ export async function POST(request: Request) {
       .single()
 
     if (orderError) {
+      console.error('Order creation error:', orderError)
       return NextResponse.json(
-        { error: orderError.message },
+        { error: orderError.message, details: orderError },
+        { status: 500 }
+      )
+    }
+
+    if (!order) {
+      return NextResponse.json(
+        { error: 'Failed to create order' },
         { status: 500 }
       )
     }
@@ -70,18 +86,20 @@ export async function POST(request: Request) {
       .insert(orderItems)
 
     if (itemsError) {
+      console.error('Order items creation error:', itemsError)
       // Rollback order creation if items fail
       await supabase.from('orders').delete().eq('id', order.id)
       return NextResponse.json(
-        { error: itemsError.message },
+        { error: itemsError.message, details: itemsError },
         { status: 500 }
       )
     }
 
     return NextResponse.json({ order: order as Order, order_number: orderNumber })
-  } catch (error) {
+  } catch (error: any) {
+    console.error('Checkout error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error?.message || 'Internal server error', details: error },
       { status: 500 }
     )
   }

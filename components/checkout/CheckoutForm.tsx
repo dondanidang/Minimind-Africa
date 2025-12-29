@@ -119,31 +119,17 @@ export function CheckoutForm({ onSubmit, isLoading = false }: CheckoutFormProps)
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-                Ville *
-              </label>
-              <Input
-                id="city"
-                type="text"
-                required
-                value={formData.shipping_address.city}
-                onChange={(e) => handleChange('shipping_address.city', e.target.value)}
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="postal_code" className="block text-sm font-medium text-gray-700 mb-1">
-                Code postal
-              </label>
-              <Input
-                id="postal_code"
-                type="text"
-                value={formData.shipping_address.postal_code}
-                onChange={(e) => handleChange('shipping_address.postal_code', e.target.value)}
-              />
-            </div>
+          <div>
+            <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+              Ville *
+            </label>
+            <Input
+              id="city"
+              type="text"
+              required
+              value={formData.shipping_address.city}
+              onChange={(e) => handleChange('shipping_address.city', e.target.value)}
+            />
           </div>
           
           <div>
@@ -154,6 +140,7 @@ export function CheckoutForm({ onSubmit, isLoading = false }: CheckoutFormProps)
               id="country"
               type="text"
               required
+              disabled
               value={formData.shipping_address.country}
               onChange={(e) => handleChange('shipping_address.country', e.target.value)}
             />
