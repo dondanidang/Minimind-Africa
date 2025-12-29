@@ -6,6 +6,11 @@ export type Order = {
   customer_name: string | null
   customer_phone: string | null
   shipping_address: Record<string, any> | null
+  payment_data: {
+    payment_link_url?: string
+    payment_link_id?: string
+    webhooks?: Array<Record<string, any>>
+  } | null
   total: number
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
   payment_method: string | null

@@ -47,17 +47,23 @@ npm install
 cp .env.local.example .env.local
 ```
 
-Edit `.env.local` and add your Supabase credentials:
+Edit `.env.local` and add your Supabase and Jeko credentials:
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
 SUPABASE_SECRET_KEY=your_secret_key
+
+JEKO_API_KEY=your_jeko_api_key
+JEKO_API_KEY_ID=your_jeko_api_key_id
+JEKO_STORE_ID=your_jeko_store_id
 ```
 
 4. Set up the database:
    - Go to your Supabase project dashboard
    - Open the SQL Editor
    - Run the SQL script from `supabase-schema.sql`
+   - Run the migration script from `supabase-migration-orders-rls.sql` (if not already in schema)
+   - Run the migration script from `supabase-migration-payment-data.sql` (if not already in schema)
 
 5. Run the development server:
 ```bash

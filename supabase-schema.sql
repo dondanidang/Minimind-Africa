@@ -60,6 +60,7 @@ CREATE TABLE orders (
   customer_name VARCHAR(255),
   customer_phone VARCHAR(50),
   shipping_address JSONB,
+  payment_data JSONB,
   total DECIMAL(10, 2) NOT NULL,
   status VARCHAR(50) DEFAULT 'pending',
   payment_method VARCHAR(50),

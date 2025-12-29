@@ -50,7 +50,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           ...formData,
           items: orderItems,
-          payment_method: paymentMethod,
+          payment_method: 'jeko', // Use Jeko for payment
         }),
       })
 
@@ -59,13 +59,13 @@ export default function CheckoutPage() {
         throw new Error(error.error || 'Failed to create order')
       }
 
-      const { order_number } = await response.json()
+      const { order } = await response.json()
 
-      // Clear cart
-      clearCart()
+      // Don't clear cart yet - wait for payment confirmation
+      // clearCart()
 
-      // Redirect to success page (you can create this later)
-      router.push(`/checkout/success?order=${order_number}`)
+      // Redirect to payment page with order ID
+      router.push(`/checkout/payment?order=${order.id}`)
     } catch (error) {
       console.error('Checkout error:', error)
       alert('Une erreur est survenue lors de la commande. Veuillez réessayer.')
