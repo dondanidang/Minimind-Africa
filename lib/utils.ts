@@ -22,3 +22,19 @@ export function generateSlug(text: string): string {
     .replace(/(^-|-$)/g, '')
 }
 
+export function getDisplayPrice(product: { price: number; promo_price?: number | null }): number {
+  return product.promo_price && product.promo_price < product.price 
+    ? product.promo_price 
+    : product.price
+}
+
+export function getOriginalPrice(product: { price: number; promo_price?: number | null }): number {
+  return product.price
+}
+
+export function getDiscountPercentage(product: { price: number; promo_price?: number | null }): number | null {
+  if (!product.promo_price || product.promo_price >= product.price) return null
+  const discount = ((product.price - product.promo_price) / product.price) * 100
+  return Math.round(discount)
+}
+

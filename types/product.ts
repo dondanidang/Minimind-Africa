@@ -6,6 +6,7 @@ export type Product = {
   slug: string
   description: string | null
   price: number
+  promo_price?: number | null
   images: string[]
   stock: number
   featured: boolean

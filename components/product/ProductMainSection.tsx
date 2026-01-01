@@ -7,7 +7,7 @@ import { QuantitySelector } from './QuantitySelector'
 import { AddToCartButton } from './AddToCartButton'
 import { Button } from '@/components/ui/Button'
 import { useCartStore } from '@/store/cartStore'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, getDisplayPrice, getDiscountPercentage } from '@/lib/utils'
 import type { Product } from '@/types/product'
 import type { Review } from '@/types/review'
 import type { ProductPageContent } from '@/types/productPageContent'
@@ -94,9 +94,23 @@ export function ProductMainSection({
             )}
             
             <div className="flex items-baseline gap-4 mb-4">
-              <p className="text-4xl font-bold text-primary-600">
-                {formatPrice(product.price)}
-              </p>
+              <div className="flex flex-col">
+                <div className="flex items-baseline gap-3">
+                  <p className={`text-4xl font-bold ${product.promo_price ? 'text-red-600' : 'text-primary-600'}`}>
+                    {formatPrice(getDisplayPrice(product))}
+                  </p>
+                  {product.promo_price && product.promo_price < product.price && (
+                    <>
+                      <p className="text-2xl text-gray-400 line-through">
+                        {formatPrice(product.price)}
+                      </p>
+                      <span className="text-base font-semibold text-red-600 bg-red-50 px-3 py-1 rounded">
+                        -{getDiscountPercentage(product)}%
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

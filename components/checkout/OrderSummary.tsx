@@ -2,12 +2,20 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, getDisplayPrice } from '@/lib/utils'
 import { useCartStore } from '@/store/cartStore'
 
 export function OrderSummary() {
   const items = useCartStore(state => state.items)
   const total = useCartStore(state => state.getTotal())
+
+  // Calculate original total (without discounts) and savings
+  const originalTotal = items.reduce((sum, item) => {
+    if (!item.product) return sum
+    return sum + item.product.price * item.quantity
+  }, 0)
+
+  const savings = originalTotal - total
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">
@@ -17,6 +25,7 @@ export function OrderSummary() {
         {items.map((item) => {
           if (!item.product) return null
           const imageUrl = item.product.images?.[0] || '/placeholder-product.jpg'
+          const price = getDisplayPrice(item.product)
           
           return (
             <div key={item.product_id} className="flex items-center space-x-4">
@@ -33,7 +42,7 @@ export function OrderSummary() {
                 <p className="text-sm text-gray-600">Quantité: {item.quantity}</p>
               </div>
               <p className="font-semibold">
-                {formatPrice(item.product.price * item.quantity)}
+                {formatPrice(price * item.quantity)}
               </p>
             </div>
           )
@@ -41,10 +50,22 @@ export function OrderSummary() {
       </div>
       
       <div className="space-y-2 border-t pt-4">
+        {savings > 0 && (
+          <div className="flex justify-between text-gray-700 mb-2">
+            <span className="font-medium">Sous-total original</span>
+            <span className="line-through text-gray-400">{formatPrice(originalTotal)}</span>
+          </div>
+        )}
         <div className="flex justify-between text-gray-700">
           <span>Sous-total</span>
           <span>{formatPrice(total)}</span>
         </div>
+        {savings > 0 && (
+          <div className="flex justify-between text-green-600 font-semibold">
+            <span>Vous économisez</span>
+            <span>{formatPrice(savings)}</span>
+          </div>
+        )}
         <div className="flex justify-between text-gray-700">
           <span>Livraison</span>
           <span className="text-green-600">Gratuite</span>

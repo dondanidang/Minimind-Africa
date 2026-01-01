@@ -6,6 +6,7 @@ import { CheckoutForm } from '@/components/checkout/CheckoutForm'
 import { OrderSummary } from '@/components/checkout/OrderSummary'
 import { PaymentMethod, type PaymentMethodType } from '@/components/checkout/PaymentMethod'
 import { useCartStore } from '@/store/cartStore'
+import { getDisplayPrice } from '@/lib/utils'
 
 interface CheckoutFormData {
   customer_name: string
@@ -30,13 +31,14 @@ export default function CheckoutPage() {
     setIsSubmitting(true)
     
     try {
-      // Prepare order items
+      // Prepare order items (use promo price if available)
       const orderItems = items.map(item => {
         if (!item.product) throw new Error('Product data missing')
+        const price = getDisplayPrice(item.product)
         return {
           product_id: item.product_id,
           product_name: item.product.name,
-          product_price: item.product.price,
+          product_price: price,
           quantity: item.quantity,
         }
       })
