@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { formatPrice } from '@/lib/utils'
-import { useCartStore } from '@/store/cartStore'
 import type { Order, OrderItem } from '@/types/order'
 
 interface OrderWithItems extends Order {
@@ -15,7 +14,6 @@ export default function PaymentPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const orderId = searchParams.get('order')
-  const clearCart = useCartStore(state => state.clearCart)
   const [order, setOrder] = useState<OrderWithItems | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isCreatingPayment, setIsCreatingPayment] = useState(false)
@@ -64,9 +62,6 @@ export default function PaymentPage() {
       }
 
       const { paymentLink } = await response.json()
-      
-      // Clear cart when payment link is created and user is about to pay
-      clearCart()
       
       // Redirect to Jeko payment page
       window.location.href = paymentLink.link

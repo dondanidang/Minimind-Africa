@@ -56,6 +56,7 @@ SUPABASE_SECRET_KEY=your_secret_key
 JEKO_API_KEY=your_jeko_api_key
 JEKO_API_KEY_ID=your_jeko_api_key_id
 JEKO_STORE_ID=your_jeko_store_id
+JEKO_WEBHOOK_SECRET=your_jeko_webhook_secret
 ```
 
 4. Set up the database:
@@ -64,8 +65,17 @@ JEKO_STORE_ID=your_jeko_store_id
    - Run the SQL script from `supabase-schema.sql`
    - Run the migration script from `supabase-migration-orders-rls.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-payment-data.sql` (if not already in schema)
+   - Run the migration script from `supabase-migration-orders-update-rls.sql` (if not already in schema)
 
-5. Run the development server:
+5. Configure Jeko Webhooks:
+   - Log in to [Jeko Cockpit](https://cockpit.jeko.africa)
+   - Navigate to **Paramètres** > **API & Webhooks**
+   - Enter your webhook URL: `https://yourdomain.com/api/webhooks/jeko`
+     - For local testing, use a service like [ngrok](https://ngrok.com) to expose your local server
+   - Copy your **Webhook Secret** and add it to `.env.local` as `JEKO_WEBHOOK_SECRET`
+   - The webhook endpoint will automatically verify signatures and update order status when payments are completed
+
+6. Run the development server:
 ```bash
 npm run dev
 ```

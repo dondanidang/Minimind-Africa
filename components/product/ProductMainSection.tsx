@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ProductGallery } from './ProductGallery'
 import { QuantitySelector } from './QuantitySelector'
@@ -25,13 +25,21 @@ export function ProductMainSection({
 }: ProductMainSectionProps) {
   const [quantity, setQuantity] = useState(1)
   const [isExpanded, setIsExpanded] = useState(false)
+  // Generate random number between 5 and 20 for FOMO urgency message
+  // Start with a default value to avoid hydration mismatch, then set random on client
+  const [urgencyCount, setUrgencyCount] = useState(10)
+  
+  // Set random number only on client side after hydration
+  useEffect(() => {
+    setUrgencyCount(Math.floor(Math.random() * (20 - 5 + 1)) + 5)
+  }, [])
+  
   const router = useRouter()
   const addItem = useCartStore(state => state.addItem)
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0
 
-  const urgencyCount = pageContent?.urgencyCount ?? 7
   const mainFeatures = pageContent?.mainFeatures ?? []
   const whyThisGame = pageContent?.whyThisGame
 

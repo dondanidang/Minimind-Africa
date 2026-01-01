@@ -61,8 +61,8 @@ export default function CheckoutPage() {
 
       const { order } = await response.json()
 
-      // Don't clear cart yet - wait for payment confirmation
-      // clearCart()
+      // Clear cart when order is successfully created
+      clearCart()
 
       // Redirect to payment page with order ID
       router.push(`/checkout/payment?order=${order.id}`)

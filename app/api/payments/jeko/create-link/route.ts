@@ -118,22 +118,33 @@ export async function POST(request: Request) {
     // Store payment link data in order
     const paymentData = {
       payment_link_url: paymentLink.link,
-      payment_link_id: paymentLink.id,
-      webhooks: [],
+      payment_link_id: paymentLink.id
     }
 
-    const { error: updateError } = await supabase
+    const { data: updatedOrder, error: updateError } = await supabase
       .from('orders')
       .update({
         payment_data: paymentData,
       })
       .eq('id', orderId)
+      .select()
+      .single()
 
     if (updateError) {
       console.error('Error updating order with payment data:', updateError)
-      // Don't fail the request, payment link was created successfully
+      // Still return the payment link, but log the error
+      // This allows the user to proceed with payment even if DB update fails
+      return NextResponse.json(
+        { 
+          paymentLink,
+          warning: 'Payment link created but failed to save to database',
+          error: updateError.message
+        },
+        { status: 200 }
+      )
     }
 
+    console.log('Payment data saved successfully for order:', orderId)
     return NextResponse.json({ paymentLink })
   } catch (error: any) {
     console.error('Payment link creation error:', error)
