@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { getDisplayPrice } from '@/lib/utils'
+import { getDisplayPrice, getPriceForQuantity } from '@/lib/utils'
 import type { CartItem } from '@/types/cart'
 import type { Product } from '@/types/product'
 
@@ -66,8 +66,8 @@ export const useCartStore = create<CartStore>()(
       getTotal: () => {
         return get().items.reduce((total, item) => {
           if (!item.product) return total
-          const price = getDisplayPrice(item.product)
-          return total + price * item.quantity
+          // Use bundle pricing if available, otherwise use regular/promo price
+          return total + getPriceForQuantity(item.product, item.quantity)
         }, 0)
       },
       

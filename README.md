@@ -67,6 +67,7 @@ JEKO_WEBHOOK_SECRET=your_jeko_webhook_secret
    - Run the migration script from `supabase-migration-payment-data.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-orders-update-rls.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-promo-price.sql` (if not already in schema)
+   - Run the migration script from `supabase-migration-bundle-pricing.sql` (if not already in schema)
 
 5. Configure Jeko Webhooks:
    - Log in to [Jeko Cockpit](https://cockpit.jeko.africa)

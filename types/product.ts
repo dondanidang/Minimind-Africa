@@ -1,5 +1,10 @@
 import type { ProductPageContent } from './productPageContent'
 
+export type BundlePrice = {
+  quantity: number
+  price: number
+}
+
 export type Product = {
   id: string
   name: string
@@ -7,6 +12,7 @@ export type Product = {
   description: string | null
   price: number
   promo_price?: number | null
+  bundle_pricing?: BundlePrice[] | null
   images: string[]
   stock: number
   featured: boolean

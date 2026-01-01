@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { formatPrice, getDisplayPrice } from '@/lib/utils'
+import { formatPrice, getPriceForQuantity } from '@/lib/utils'
 import { useCartStore } from '@/store/cartStore'
 
 export function OrderSummary() {
@@ -25,7 +25,7 @@ export function OrderSummary() {
         {items.map((item) => {
           if (!item.product) return null
           const imageUrl = item.product.images?.[0] || '/placeholder-product.jpg'
-          const price = getDisplayPrice(item.product)
+          const subtotal = getPriceForQuantity(item.product, item.quantity)
           
           return (
             <div key={item.product_id} className="flex items-center space-x-4">
@@ -42,7 +42,7 @@ export function OrderSummary() {
                 <p className="text-sm text-gray-600">Quantité: {item.quantity}</p>
               </div>
               <p className="font-semibold">
-                {formatPrice(price * item.quantity)}
+                {formatPrice(subtotal)}
               </p>
             </div>
           )

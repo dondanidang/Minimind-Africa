@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { QuantitySelector } from '@/components/product/QuantitySelector'
-import { formatPrice, getDisplayPrice } from '@/lib/utils'
+import { formatPrice, getPriceForQuantity } from '@/lib/utils'
 import { useCartStore } from '@/store/cartStore'
 import type { CartItem as CartItemType } from '@/types/cart'
 
@@ -18,8 +18,9 @@ export function CartItem({ item }: CartItemProps) {
   if (!item.product) return null
 
   const imageUrl = item.product.images?.[0] || '/placeholder-product.jpg'
-  const price = getDisplayPrice(item.product)
-  const subtotal = price * item.quantity
+  const subtotal = getPriceForQuantity(item.product, item.quantity)
+  // Calculate unit price for display (subtotal / quantity)
+  const unitPrice = subtotal / item.quantity
 
   return (
     <div className="flex items-center space-x-4 py-4 border-b">
@@ -41,7 +42,7 @@ export function CartItem({ item }: CartItemProps) {
           </h3>
         </Link>
         <p className="text-primary-600 font-semibold mt-1">
-          {formatPrice(price)}
+          {formatPrice(unitPrice)}
         </p>
       </div>
       

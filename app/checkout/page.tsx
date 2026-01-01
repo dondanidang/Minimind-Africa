@@ -6,7 +6,7 @@ import { CheckoutForm } from '@/components/checkout/CheckoutForm'
 import { OrderSummary } from '@/components/checkout/OrderSummary'
 import { PaymentMethod, type PaymentMethodType } from '@/components/checkout/PaymentMethod'
 import { useCartStore } from '@/store/cartStore'
-import { getDisplayPrice } from '@/lib/utils'
+import { getPriceForQuantity } from '@/lib/utils'
 
 interface CheckoutFormData {
   customer_name: string
@@ -31,14 +31,17 @@ export default function CheckoutPage() {
     setIsSubmitting(true)
     
     try {
-      // Prepare order items (use promo price if available)
+      // Prepare order items (use bundle pricing or promo price if available)
       const orderItems = items.map(item => {
         if (!item.product) throw new Error('Product data missing')
-        const price = getDisplayPrice(item.product)
+        // Calculate total price for this quantity (handles bundle pricing)
+        const totalPrice = getPriceForQuantity(item.product, item.quantity)
+        // Store the effective price per unit (total / quantity)
+        const pricePerUnit = totalPrice / item.quantity
         return {
           product_id: item.product_id,
           product_name: item.product.name,
-          product_price: price,
+          product_price: pricePerUnit,
           quantity: item.quantity,
         }
       })

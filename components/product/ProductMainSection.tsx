@@ -7,7 +7,8 @@ import { QuantitySelector } from './QuantitySelector'
 import { AddToCartButton } from './AddToCartButton'
 import { Button } from '@/components/ui/Button'
 import { useCartStore } from '@/store/cartStore'
-import { formatPrice, getDisplayPrice, getDiscountPercentage } from '@/lib/utils'
+import { formatPrice, getDisplayPrice, getDiscountPercentage, getPriceForQuantity } from '@/lib/utils'
+import { ProductBundlePricing } from './ProductBundlePricing'
 import type { Product } from '@/types/product'
 import type { Review } from '@/types/review'
 import type { ProductPageContent } from '@/types/productPageContent'
@@ -187,31 +188,67 @@ export function ProductMainSection({
             </div>
           )}
 
-          {/* Quantity and Buttons */}
+          {/* Bundle Pricing or Quantity Selector */}
           <div className="space-y-4">
-            <div className="flex items-end space-x-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Quantité</label>
-                <QuantitySelector
-                  quantity={quantity}
-                  onQuantityChange={setQuantity}
-                  max={product.stock}
-                  disabled={product.stock === 0}
+            {product.bundle_pricing && product.bundle_pricing.length > 0 ? (
+              <>
+                <ProductBundlePricing
+                  bundlePricing={product.bundle_pricing}
+                  regularPrice={product.promo_price && product.promo_price < product.price 
+                    ? product.promo_price 
+                    : product.price}
+                  selectedQuantity={quantity}
+                  onQuantitySelect={setQuantity}
+                  maxQuantity={product.stock}
                 />
-              </div>
-              <div className="flex-1">
-                <AddToCartButton product={product} quantity={quantity} className="w-full" />
-              </div>
-            </div>
-            
-            {/* Buy Now Button */}
-            <Button
-              onClick={handleBuyNow}
-              disabled={product.stock === 0}
-              className="w-full bg-black text-white hover:bg-gray-800"
-            >
-              Acheter maintenant
-            </Button>
+                <div className="pt-2">
+                  <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium">Total:</span>
+                    <span className="text-xl font-bold text-primary-600">
+                      {formatPrice(getPriceForQuantity(product, quantity))}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <AddToCartButton product={product} quantity={quantity} className="w-full" />
+                  </div>
+                  <Button
+                    onClick={handleBuyNow}
+                    disabled={product.stock === 0}
+                    className="flex-1 bg-black text-white hover:bg-gray-800"
+                  >
+                    Acheter maintenant
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-end space-x-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Quantité</label>
+                    <QuantitySelector
+                      quantity={quantity}
+                      onQuantityChange={setQuantity}
+                      max={product.stock}
+                      disabled={product.stock === 0}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <AddToCartButton product={product} quantity={quantity} className="w-full" />
+                  </div>
+                </div>
+                
+                {/* Buy Now Button */}
+                <Button
+                  onClick={handleBuyNow}
+                  disabled={product.stock === 0}
+                  className="w-full bg-black text-white hover:bg-gray-800"
+                >
+                  Acheter maintenant
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Payment/Delivery Info */}
