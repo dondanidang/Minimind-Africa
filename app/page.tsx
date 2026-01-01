@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/server'
 import type { Product } from '@/types/product'
 import type { Review } from '@/types/review'
 
+export const dynamic = 'force-dynamic'
+
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
     const supabase = await createClient()

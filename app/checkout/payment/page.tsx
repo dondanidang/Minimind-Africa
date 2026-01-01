@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { formatPrice } from '@/lib/utils'
@@ -10,7 +10,7 @@ interface OrderWithItems extends Order {
   order_items?: OrderItem[]
 }
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const orderId = searchParams.get('order')
@@ -152,6 +152,18 @@ export default function PaymentPage() {
         </Button>
       </div>
     </div>
+  )
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-12 text-center">
+        <p>Chargement...</p>
+      </div>
+    }>
+      <PaymentPageContent />
+    </Suspense>
   )
 }
 
