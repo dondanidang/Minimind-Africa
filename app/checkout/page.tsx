@@ -7,6 +7,7 @@ import { OrderSummary } from '@/components/checkout/OrderSummary'
 import { PaymentMethod, type PaymentMethodType } from '@/components/checkout/PaymentMethod'
 import { useCartStore } from '@/store/cartStore'
 import { getPriceForQuantity } from '@/lib/utils'
+import { trackInitiateCheckout } from '@/lib/analytics'
 
 interface CheckoutFormData {
   customer_name: string
@@ -31,6 +32,13 @@ export default function CheckoutPage() {
     setIsSubmitting(true)
     
     try {
+      // Track Facebook Pixel InitiateCheckout event
+      const cartTotal = items.reduce((sum, item) => {
+        if (!item.product) return sum
+        return sum + getPriceForQuantity(item.product, item.quantity)
+      }, 0)
+      trackInitiateCheckout(cartTotal)
+
       // Prepare order items (use bundle pricing or promo price if available)
       const orderItems = items.map(item => {
         if (!item.product) throw new Error('Product data missing')

@@ -57,6 +57,8 @@ JEKO_API_KEY=your_jeko_api_key
 JEKO_API_KEY_ID=your_jeko_api_key_id
 JEKO_STORE_ID=your_jeko_store_id
 JEKO_WEBHOOK_SECRET=your_jeko_webhook_secret
+
+NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
 ```
 
 4. Set up the database:

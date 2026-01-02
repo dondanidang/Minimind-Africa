@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { useCartStore } from '@/store/cartStore'
+import { trackAddToCart } from '@/lib/analytics'
+import { getPriceForQuantity } from '@/lib/utils'
 import type { Product } from '@/types/product'
 
 interface AddToCartButtonProps {
@@ -21,6 +23,9 @@ export function AddToCartButton({ product, quantity = 1, className }: AddToCartB
     setIsAdding(true)
     try {
       addItem(product, quantity)
+      // Track Facebook Pixel AddToCart event
+      const totalPrice = getPriceForQuantity(product, quantity)
+      trackAddToCart({ name: product.name, price: totalPrice }, quantity)
       // Optional: Show a toast notification here
       // For now, just add to cart
     } catch (error) {
