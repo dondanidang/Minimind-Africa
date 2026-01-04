@@ -58,6 +58,7 @@ JEKO_API_KEY_ID=your_jeko_api_key_id
 JEKO_STORE_ID=your_jeko_store_id
 JEKO_WEBHOOK_SECRET=your_jeko_webhook_secret
 
+NEXT_PUBLIC_BASE_URL=https://yourdomain.com
 NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
 ```
 
@@ -67,6 +68,7 @@ NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
    - Run the SQL script from `supabase-schema.sql`
    - Run the migration script from `supabase-migration-orders-rls.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-payment-data.sql` (if not already in schema)
+   - Run the migration script from `supabase-migration-orders-email-nullable.sql` (if customer_email is NOT NULL in your existing schema)
    - Run the migration script from `supabase-migration-orders-update-rls.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-promo-price.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-bundle-pricing.sql` (if not already in schema)

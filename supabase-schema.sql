@@ -56,7 +56,7 @@ CREATE TABLE orders (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   order_number VARCHAR(50) UNIQUE NOT NULL,
   user_id UUID REFERENCES auth.users(id),
-  customer_email VARCHAR(255) NOT NULL,
+  customer_email VARCHAR(255),
   customer_name VARCHAR(255),
   customer_phone VARCHAR(50),
   shipping_address JSONB,

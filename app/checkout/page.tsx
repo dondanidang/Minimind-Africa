@@ -4,28 +4,20 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CheckoutForm } from '@/components/checkout/CheckoutForm'
 import { OrderSummary } from '@/components/checkout/OrderSummary'
-import { PaymentMethod, type PaymentMethodType } from '@/components/checkout/PaymentMethod'
 import { useCartStore } from '@/store/cartStore'
 import { getPriceForQuantity } from '@/lib/utils'
 import { trackInitiateCheckout } from '@/lib/analytics'
 
 interface CheckoutFormData {
   customer_name: string
-  customer_email: string
   customer_phone: string
-  shipping_address: {
-    street: string
-    city: string
-    postal_code: string
-    country: string
-  }
+  shipping_address: string
 }
 
 export default function CheckoutPage() {
   const router = useRouter()
   const items = useCartStore(state => state.items)
   const clearCart = useCartStore(state => state.clearCart)
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('mobile_money')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (formData: CheckoutFormData) => {
@@ -54,14 +46,17 @@ export default function CheckoutPage() {
         }
       })
 
-      // Create order
+      // Create order - convert shipping_address string to JSONB format expected by API
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
+          customer_name: formData.customer_name,
+          customer_phone: formData.customer_phone,
+          customer_email: null, // Not required anymore
+          shipping_address: formData.shipping_address,
           items: orderItems,
           payment_method: 'jeko', // Use Jeko for payment
         }),
@@ -104,12 +99,8 @@ export default function CheckoutPage() {
       <h1 className="text-4xl font-bold mb-8">Checkout</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2">
           <CheckoutForm onSubmit={handleSubmit} isLoading={isSubmitting} />
-          <PaymentMethod
-            selectedMethod={paymentMethod}
-            onMethodChange={setPaymentMethod}
-          />
         </div>
         
         <div className="lg:col-span-1">
@@ -119,4 +110,3 @@ export default function CheckoutPage() {
     </div>
   )
 }
-

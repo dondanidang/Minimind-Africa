@@ -2,7 +2,7 @@ export type Order = {
   id: string
   order_number: string
   user_id: string | null
-  customer_email: string
+  customer_email: string | null
   customer_name: string | null
   customer_phone: string | null
   shipping_address: Record<string, any> | null

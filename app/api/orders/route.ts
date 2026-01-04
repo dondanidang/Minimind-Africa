@@ -23,9 +23,9 @@ export async function POST(request: Request) {
     } = body
 
     // Validate required fields
-    if (!customer_email || !items || !Array.isArray(items) || items.length === 0) {
+    if (!customer_name || !customer_phone || !shipping_address || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
-        { error: 'Missing required fields: customer_email and items are required' },
+        { error: 'Missing required fields: customer_name, customer_phone, shipping_address and items are required' },
         { status: 400 }
       )
     }
@@ -40,15 +40,20 @@ export async function POST(request: Request) {
 
     // Create order
     const orderNumber = generateOrderNumber()
+    // Handle shipping_address - can be string or object
+    const shippingAddressData = typeof shipping_address === 'string' 
+      ? shipping_address 
+      : shipping_address || null
+    
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
         order_number: orderNumber,
         user_id: user?.id || null,
-        customer_email,
+        customer_email: customer_email || null,
         customer_name: customer_name || null,
         customer_phone: customer_phone || null,
-        shipping_address: shipping_address || null,
+        shipping_address: shippingAddressData,
         total,
         payment_method: payment_method || null,
         status: 'pending',

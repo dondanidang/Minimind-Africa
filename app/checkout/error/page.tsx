@@ -5,29 +5,22 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 
-function SuccessContent() {
+function ErrorContent() {
   const searchParams = useSearchParams()
   const reference = searchParams.get('reference')
   const orderId = searchParams.get('order')
-  const [verifying, setVerifying] = useState(true)
-  const [verified, setVerified] = useState(false)
+  const [order, setOrder] = useState<any>(null)
 
   useEffect(() => {
-    // Verify payment status via API
     if (orderId) {
       fetch(`/api/orders/${orderId}`)
         .then(res => res.json())
         .then(data => {
-          if (data.order && data.order.payment_status === 'paid') {
-            setVerified(true)
+          if (data.order) {
+            setOrder(data.order)
           }
-          setVerifying(false)
         })
-        .catch(() => {
-          setVerifying(false)
-        })
-    } else {
-      setVerifying(false)
+        .catch(console.error)
     }
   }, [orderId])
 
@@ -36,7 +29,7 @@ function SuccessContent() {
       <div className="max-w-2xl mx-auto text-center">
         <div className="mb-6">
           <svg
-            className="mx-auto h-16 w-16 text-green-500"
+            className="mx-auto h-16 w-16 text-red-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -45,28 +38,29 @@ function SuccessContent() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M5 13l4 4L19 7"
+              d="M6 18L18 6M6 6l12 12"
             />
           </svg>
         </div>
         
-        <h1 className="text-4xl font-bold mb-4">Paiement réussi !</h1>
+        <h1 className="text-4xl font-bold mb-4">Paiement échoué</h1>
         {reference && (
           <p className="text-lg text-gray-600 mb-2">
             Commande #{reference}
           </p>
         )}
         <p className="text-xl text-gray-600 mb-8">
-          {verifying 
-            ? 'Vérification du paiement en cours...'
-            : verified
-            ? 'Votre paiement a été confirmé. Nous avons reçu votre commande et vous contacterons bientôt.'
-            : 'Merci pour votre achat. Nous traiterons votre commande sous peu.'}
+          Le paiement n'a pas pu être effectué. Veuillez réessayer ou choisir une autre méthode de paiement.
         </p>
         
         <div className="space-y-4">
+          {order && (
+            <Link href={`/checkout/payment?order=${order.id}`}>
+              <Button>Réessayer le paiement</Button>
+            </Link>
+          )}
           <Link href="/products">
-            <Button>Continuer les achats</Button>
+            <Button variant="outline">Retour aux produits</Button>
           </Link>
         </div>
       </div>
@@ -74,10 +68,11 @@ function SuccessContent() {
   )
 }
 
-export default function CheckoutSuccessPage() {
+export default function CheckoutErrorPage() {
   return (
     <Suspense fallback={<div className="container mx-auto px-4 py-12 text-center">Chargement...</div>}>
-      <SuccessContent />
+      <ErrorContent />
     </Suspense>
   )
 }
+
