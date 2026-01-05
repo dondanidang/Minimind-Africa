@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/Button'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
 import { PageContentEditor } from '@/components/admin/PageContentEditor'
+import { FileUploader } from '@/components/admin/FileUploader'
+import { AssetsGallery } from '@/components/admin/AssetsGallery'
 import type { Product } from '@/types/product'
 import type { ProductPageContent } from '@/types/productPageContent'
 
@@ -24,11 +26,11 @@ export default function EditProductPage() {
     promo_price: '',
     stock: '0',
     featured: false,
-    images: [] as string[],
+    images: '' as string,
+    assets: [] as string[],
     bundle_pricing: [] as Array<{ quantity: number; price: number }>,
     page_content: null as ProductPageContent | null,
   })
-  const [imageUrl, setImageUrl] = useState('')
   const [bundleQuantity, setBundleQuantity] = useState('')
   const [bundlePrice, setBundlePrice] = useState('')
 
@@ -63,7 +65,8 @@ export default function EditProductPage() {
         promo_price: product.promo_price?.toString() || '',
         stock: product.stock?.toString() || '0',
         featured: product.featured || false,
-        images: product.images || [],
+        images: Array.isArray(product.images) ? product.images.join('\n') : '',
+        assets: (product as any).assets || [],
         bundle_pricing: product.bundle_pricing || [],
         page_content: product.page_content || null,
       })
@@ -80,6 +83,12 @@ export default function EditProductPage() {
     setSaving(true)
 
     try {
+      // Convert images textarea (newline-separated URLs) to array
+      const imagesArray = formData.images
+        .split('\n')
+        .map(url => url.trim())
+        .filter(Boolean)
+
       const updateData = {
         name: formData.name,
         slug: formData.slug || null,
@@ -88,7 +97,8 @@ export default function EditProductPage() {
         promo_price: formData.promo_price ? parseFloat(formData.promo_price) : null,
         stock: parseInt(formData.stock),
         featured: formData.featured,
-        images: formData.images.filter(Boolean),
+        images: imagesArray,
+        assets: formData.assets.filter(Boolean),
         bundle_pricing: formData.bundle_pricing.length > 0 ? formData.bundle_pricing : null,
         page_content: formData.page_content,
         updated_at: new Date().toISOString(),
@@ -111,13 +121,6 @@ export default function EditProductPage() {
       alert('Error updating product')
     } finally {
       setSaving(false)
-    }
-  }
-
-  const addImage = () => {
-    if (imageUrl) {
-      setFormData({ ...formData, images: [...formData.images, imageUrl] })
-      setImageUrl('')
     }
   }
 
@@ -242,39 +245,30 @@ export default function EditProductPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Images
+            Product Images (Gallery) *
           </label>
-          <div className="flex gap-2 mb-2">
-            <input
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="Image URL"
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2"
-            />
-            <Button type="button" onClick={addImage}>
-              Add
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {formData.images.map((img, idx) => (
-              <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                <span className="text-sm text-gray-700 truncate">{img}</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormData({
-                      ...formData,
-                      images: formData.images.filter((_, i) => i !== idx),
-                    })
-                  }}
-                  className="text-red-600 hover:text-red-800 text-sm"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
+          <textarea
+            value={formData.images}
+            onChange={(e) => setFormData({ ...formData, images: e.target.value })}
+            rows={6}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm"
+            placeholder="Enter image URLs, one per line:&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Enter image URLs, one per line. These images will appear in the product gallery.
+          </p>
+        </div>
+
+        <div>
+          <FileUploader
+            productId={productId}
+            files={formData.assets}
+            onFilesChange={(files) => setFormData({ ...formData, assets: files })}
+            label="Assets (Images & Videos for Page Content)"
+            maxFiles={50}
+            showPreview={false}
+          />
+          <AssetsGallery assets={formData.assets} />
         </div>
 
         <div>

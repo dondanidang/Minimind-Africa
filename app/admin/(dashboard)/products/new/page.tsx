@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { createClient } from '@/lib/supabase/client'
+import { FileUploader } from '@/components/admin/FileUploader'
+import { AssetsGallery } from '@/components/admin/AssetsGallery'
 
 export default function NewProductPage() {
   const router = useRouter()
@@ -17,9 +19,11 @@ export default function NewProductPage() {
     promo_price: '',
     stock: '0',
     featured: false,
-    images: [] as string[],
+    images: '' as string,
+    assets: [] as string[],
   })
-  const [imageUrl, setImageUrl] = useState('')
+  // Generate temporary ID for file uploads before product is created
+  const [tempProductId] = useState(() => `temp-${Date.now()}-${Math.random().toString(36).substring(7)}`)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,6 +41,12 @@ export default function NewProductPage() {
           .replace(/(^-|-$)/g, '')
       }
 
+      // Convert images textarea (newline-separated URLs) to array
+      const imagesArray = formData.images
+        .split('\n')
+        .map(url => url.trim())
+        .filter(Boolean)
+
       const insertData = {
         name: formData.name,
         slug: slug || null,
@@ -45,7 +55,8 @@ export default function NewProductPage() {
         promo_price: formData.promo_price ? parseFloat(formData.promo_price) : null,
         stock: parseInt(formData.stock),
         featured: formData.featured,
-        images: formData.images.filter(Boolean),
+        images: imagesArray,
+        assets: formData.assets.filter(Boolean),
         updated_at: new Date().toISOString(),
       }
 
@@ -65,13 +76,6 @@ export default function NewProductPage() {
       alert('Error creating product')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const addImage = () => {
-    if (imageUrl) {
-      setFormData({ ...formData, images: [...formData.images, imageUrl] })
-      setImageUrl('')
     }
   }
 
@@ -174,39 +178,30 @@ export default function NewProductPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Images
+            Product Images (Gallery) *
           </label>
-          <div className="flex gap-2 mb-2">
-            <input
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="Image URL"
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2"
-            />
-            <Button type="button" onClick={addImage}>
-              Add
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {formData.images.map((img, idx) => (
-              <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                <span className="text-sm text-gray-700 truncate">{img}</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormData({
-                      ...formData,
-                      images: formData.images.filter((_, i) => i !== idx),
-                    })
-                  }}
-                  className="text-red-600 hover:text-red-800 text-sm"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
+          <textarea
+            value={formData.images}
+            onChange={(e) => setFormData({ ...formData, images: e.target.value })}
+            rows={6}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm"
+            placeholder="Enter image URLs, one per line:&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Enter image URLs, one per line. These images will appear in the product gallery.
+          </p>
+        </div>
+
+        <div>
+          <FileUploader
+            productId={tempProductId}
+            files={formData.assets}
+            onFilesChange={(files) => setFormData({ ...formData, assets: files })}
+            label="Assets (Images & Videos for Page Content)"
+            maxFiles={50}
+            showPreview={false}
+          />
+          <AssetsGallery assets={formData.assets} />
         </div>
 
         <div className="flex gap-4">

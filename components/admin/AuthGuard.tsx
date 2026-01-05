@@ -13,15 +13,19 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
+      try {
+        const { data, error } = await supabase.auth.getUser()
+        
+        if (!data?.user) {
+          router.push('/admin/login')
+          return
+        }
+        
+        setIsAuthenticated(true)
+        setIsLoading(false)
+      } catch (err: any) {
         router.push('/admin/login')
-        return
       }
-      
-      setIsAuthenticated(true)
-      setIsLoading(false)
     }
 
     checkAuth()

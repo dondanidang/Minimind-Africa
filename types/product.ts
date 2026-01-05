@@ -14,6 +14,7 @@ export type Product = {
   promo_price?: number | null
   bundle_pricing?: BundlePrice[] | null
   images: string[]
+  assets?: string[]
   stock: number
   featured: boolean
   created_at: string

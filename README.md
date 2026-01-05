@@ -79,8 +79,17 @@ NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
    - Run the migration script from `supabase-migration-orders-update-rls.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-promo-price.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-bundle-pricing.sql` (if not already in schema)
+   - Run the migration script from `supabase-migration-product-assets.sql` (if not already in schema)
 
-5. Install dependencies:
+5. Set up Storage (for product image/video uploads):
+   - Go to your Supabase project dashboard
+   - Navigate to **Storage**
+   - Click **New bucket**
+   - Create a bucket named `product-assets`
+   - Set it to **Public** (or configure RLS policies)
+   - Go to **SQL Editor** and run the migration script from `supabase-migration-storage-product-assets.sql` to set up RLS policies
+
+6. Install dependencies:
    ```bash
    npm install
    ```
@@ -93,7 +102,7 @@ NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
    - Copy your **Webhook Secret** and add it to `.env.local` as `JEKO_WEBHOOK_SECRET`
    - The webhook endpoint will automatically verify signatures and update order status when payments are completed
 
-7. Configure Twilio WhatsApp (Optional - for payment confirmations):
+8. Configure Twilio WhatsApp (Optional - for payment confirmations):
    - Sign up for a [Twilio account](https://www.twilio.com/try-twilio) (free trial available)
    - For testing, use Twilio's WhatsApp sandbox:
      - Go to **Messaging** > **Try it out** > **Send a WhatsApp message**
@@ -108,7 +117,7 @@ NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
      - `TWILIO_WHATSAPP_FROM`: Your Twilio WhatsApp number (e.g., `whatsapp:+14155238886`)
    - WhatsApp confirmation messages will be sent automatically when payments are confirmed via webhook
 
-8. Run the development server:
+9. Run the development server:
 ```bash
 npm run dev
 ```

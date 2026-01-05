@@ -9,6 +9,7 @@ CREATE TABLE products (
   description TEXT,
   price DECIMAL(10, 2) NOT NULL,
   images TEXT[] DEFAULT ARRAY[]::TEXT[],
+  assets TEXT[] DEFAULT ARRAY[]::TEXT[],
   stock INTEGER DEFAULT 0,
   featured BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW(),
