@@ -3,6 +3,17 @@ import { createClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 
 const JEKO_WEBHOOK_SECRET = process.env.JEKO_WEBHOOK_SECRET
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM
+const DANIEL_WHATSAPP = process.env.DANIEL_WHATSAPP
+const PHILIPPE_WHATSAPP = process.env.PHILIPPE_WHATSAPP
+
+// Admin phone numbers for order notifications
+const ADMIN_PHONE_NUMBERS = [
+  DANIEL_WHATSAPP,
+  PHILIPPE_WHATSAPP,
+].filter(Boolean) as string[] // Filter out undefined values
 
 // Interface for Jeko webhook payload based on official documentation
 interface JekoWebhookPayload {
@@ -28,6 +39,7 @@ interface JekoWebhookPayload {
     id?: string
     reference?: string
     paymentLinkId?: string
+    paymentRequestId?: string
   }
 }
 
@@ -68,6 +80,162 @@ function verifySignature(
   } catch (error) {
     console.error('Signature verification error:', error)
     return false
+  }
+}
+
+/**
+ * Send WhatsApp payment confirmation message via Twilio
+ * @param order Order object with customer information
+ * @param amount Amount in XOF (from webhook payload)
+ * @returns Promise with Twilio message result or null if failed/skipped
+ */
+async function sendWhatsAppConfirmation(order: any, amount: number): Promise<any> {
+  // Check if Twilio is configured
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_WHATSAPP_FROM) {
+    console.warn('Twilio credentials not configured - skipping WhatsApp notification')
+    return null
+  }
+
+  // Check if customer has phone number
+  if (!order.customer_phone) {
+    console.warn('No customer phone number - skipping WhatsApp notification')
+    return null
+  }
+
+  try {
+    // Dynamically import Twilio to avoid requiring it if not configured
+    const twilio = await import('twilio')
+    const client = twilio.default(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    
+    // Format phone number
+    // Remove spaces and any existing + prefix
+    let phoneNumber = order.customer_phone.replace(/\s+/g, '').replace(/^\+/, '')
+    
+    // If phone doesn't start with country code, assume Côte d'Ivoire (+225)
+    if (!phoneNumber.startsWith('225')) {
+      phoneNumber = '225' + phoneNumber
+    }
+    
+    const toNumber = `whatsapp:+${phoneNumber}`
+
+    // Format amount in XOF (convert from cents if needed)
+    const amountInXOF = amount / 100
+
+    // Create confirmation message in French
+    const message = `✅ Paiement confirmé!
+
+Votre commande #${order.order_number} a été payée avec succès.
+
+Montant: ${amountInXOF.toLocaleString('fr-FR')} XOF
+
+Nous traiterons votre commande sous peu et vous contacterons pour la livraison.
+
+Merci pour votre achat! 🎉`
+
+    // Send WhatsApp message
+    const result = await client.messages.create({
+      from: TWILIO_WHATSAPP_FROM,
+      to: toNumber,
+      body: message,
+    })
+
+    console.log('WhatsApp confirmation sent successfully:', result.sid)
+    return result
+  } catch (error: any) {
+    // Don't fail the webhook if WhatsApp fails - just log the error
+    console.error('Error sending WhatsApp confirmation:', error.message || error)
+    return null
+  }
+}
+
+/**
+ * Send WhatsApp notification to administrators about new sale
+ * @param order Order object with customer information
+ * @param orderItems Array of order items
+ * @param amount Amount in XOF (from webhook payload)
+ * @returns Promise with results for each admin notification
+ */
+async function sendAdminNotifications(order: any, orderItems: any[], amount: number): Promise<any[]> {
+  // Check if Twilio is configured
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_WHATSAPP_FROM) {
+    console.warn('Twilio credentials not configured - skipping admin notifications')
+    return []
+  }
+
+  if (ADMIN_PHONE_NUMBERS.length === 0) {
+    console.warn('No admin phone numbers configured')
+    return []
+  }
+
+  try {
+    const twilio = await import('twilio')
+    const client = twilio.default(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    
+    // Format amount in XOF
+    const amountInXOF = amount / 100
+
+    // Format order items summary
+    const itemsSummary = orderItems.map(item => {
+      const itemTotal = item.product_price * item.quantity
+      return `• ${item.product_name} x${item.quantity} - ${itemTotal.toLocaleString('fr-FR')} XOF`
+    }).join('\n')
+
+    // Format shipping address
+    const shippingAddress = typeof order.shipping_address === 'string' 
+      ? order.shipping_address 
+      : order.shipping_address 
+        ? `${order.shipping_address.street || ''}, ${order.shipping_address.city || ''}`.trim()
+        : 'Non spécifiée'
+
+    // Create admin notification message
+    const message = `🛒 NOUVELLE VENTE
+
+Commande: #${order.order_number}
+Date: ${new Date(order.created_at).toLocaleString('fr-FR')}
+
+👤 CLIENT
+Nom: ${order.customer_name || 'Non spécifié'}
+Téléphone: ${order.customer_phone || 'Non spécifié'}
+Adresse: ${shippingAddress}
+
+📦 ARTICLES
+${itemsSummary}
+
+💰 TOTAL: ${amountInXOF.toLocaleString('fr-FR')} XOF
+
+💳 Méthode: ${order.payment_method || 'Non spécifiée'}`
+
+    // Send to all admin numbers
+    const results = await Promise.allSettled(
+      ADMIN_PHONE_NUMBERS.map(async (phoneNumber) => {
+        // Format phone number (ensure it starts with +)
+        const formattedNumber = phoneNumber.startsWith('+') 
+          ? phoneNumber 
+          : `+${phoneNumber}`
+        const toNumber = `whatsapp:${formattedNumber}`
+
+        const result = await client.messages.create({
+          from: TWILIO_WHATSAPP_FROM,
+          to: toNumber,
+          body: message,
+        })
+
+        console.log(`Admin notification sent to ${formattedNumber}:`, result.sid)
+        return { phoneNumber: formattedNumber, result }
+      })
+    )
+
+    // Log any failures
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        console.error(`Failed to send admin notification to ${ADMIN_PHONE_NUMBERS[index]}:`, result.reason)
+      }
+    })
+
+    return results.map(r => r.status === 'fulfilled' ? r.value : null).filter(Boolean)
+  } catch (error: any) {
+    console.error('Error sending admin notifications:', error.message || error)
+    return []
   }
 }
 
@@ -121,22 +289,57 @@ export async function POST(request: NextRequest) {
     
     const supabase = await createClient()
     
-    // Extract paymentLinkId from transactionDetails
+    // Extract payment request ID or payment link ID from transactionDetails
+    // Support both redirect payment requests and payment links
+    // The 'id' field in transactionDetails may be the payment request ID for redirect payments
+    const paymentRequestId = payload.transactionDetails.paymentRequestId || payload.transactionDetails.id
     const paymentLinkId = payload.transactionDetails.paymentLinkId
+    const reference = payload.transactionDetails.reference
     
-    if (!paymentLinkId) {
-      console.error('Missing paymentLinkId in transactionDetails')
-      return NextResponse.json({ received: true, message: 'Missing paymentLinkId in transactionDetails' })
+    // Try to find order by payment_request_id first (for redirect payments)
+    // Then fallback to payment_link_id (for payment link payments)
+    let order = null
+    let findError = null
+    
+    if (paymentRequestId) {
+      const result = await supabase
+        .from('orders')
+        .select('*')
+        .eq('payment_status', 'pending')
+        .filter('payment_data->>payment_request_id', 'eq', paymentRequestId)
+        .maybeSingle()
+      order = result.data
+      findError = result.error
     }
     
-    // Find order by payment_link_id stored in payment_data JSONB column
-    // Using JSONB path operator (->>) to filter directly in the database
-    const { data: order, error: findError } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('payment_status', 'pending')
-      .filter('payment_data->>payment_link_id', 'eq', paymentLinkId)
-      .maybeSingle()
+    // Fallback to payment_link_id if not found
+    if (!order && paymentLinkId) {
+      const result = await supabase
+        .from('orders')
+        .select('*')
+        .eq('payment_status', 'pending')
+        .filter('payment_data->>payment_link_id', 'eq', paymentLinkId)
+        .maybeSingle()
+      order = result.data
+      findError = result.error
+    }
+    
+    // If still not found, try to find by reference (order number)
+    if (!order && reference) {
+      const result = await supabase
+        .from('orders')
+        .select('*')
+        .eq('payment_status', 'pending')
+        .eq('order_number', reference)
+        .maybeSingle()
+      order = result.data
+      findError = result.error
+    }
+    
+    if (!paymentRequestId && !paymentLinkId && !reference) {
+      console.error('Missing payment identifier in transactionDetails')
+      return NextResponse.json({ received: true, message: 'Missing payment identifier in transactionDetails' })
+    }
     
     if (findError) {
       console.error('Error finding order:', findError)
@@ -144,7 +347,7 @@ export async function POST(request: NextRequest) {
     }
     
     if (!order) {
-      console.error('Order not found for paymentLinkId:', paymentLinkId)
+      console.error('Order not found for payment request/link ID:', paymentRequestId || paymentLinkId)
       // Return 200 to acknowledge webhook even if order not found
       // This prevents Jeko from retrying
       return NextResponse.json({ received: true, message: 'Order not found' })
@@ -189,6 +392,28 @@ export async function POST(request: NextRequest) {
     }
     
     console.log(`Order ${order.id} marked as paid`)
+    
+    // Fetch order items for admin notification
+    const { data: orderItems, error: itemsError } = await supabase
+      .from('order_items')
+      .select('*')
+      .eq('order_id', order.id)
+
+    if (itemsError) {
+      console.error('Error fetching order items for admin notification:', itemsError)
+    }
+    
+    // Send WhatsApp confirmation to customer (non-blocking - don't await to avoid delaying webhook response)
+    sendWhatsAppConfirmation(order, payload.amount.amount).catch(err => {
+      console.error('WhatsApp confirmation error (non-blocking):', err)
+    })
+    
+    // Send admin notifications with order summary (non-blocking)
+    if (orderItems && orderItems.length > 0) {
+      sendAdminNotifications(order, orderItems, payload.amount.amount).catch(err => {
+        console.error('Admin notifications error (non-blocking):', err)
+      })
+    }
     
     // Return 200 within 5 seconds as per Jeko requirements
     return NextResponse.json({ 

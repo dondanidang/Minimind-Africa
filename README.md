@@ -58,6 +58,13 @@ JEKO_API_KEY_ID=your_jeko_api_key_id
 JEKO_STORE_ID=your_jeko_store_id
 JEKO_WEBHOOK_SECRET=your_jeko_webhook_secret
 
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+
+DANIEL_WHATSAPP=+34675000111
+PHILIPPE_WHATSAPP=+2250710000111
+
 NEXT_PUBLIC_BASE_URL=https://yourdomain.com
 NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
 ```
@@ -73,7 +80,12 @@ NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
    - Run the migration script from `supabase-migration-promo-price.sql` (if not already in schema)
    - Run the migration script from `supabase-migration-bundle-pricing.sql` (if not already in schema)
 
-5. Configure Jeko Webhooks:
+5. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+6. Configure Jeko Webhooks:
    - Log in to [Jeko Cockpit](https://cockpit.jeko.africa)
    - Navigate to **Paramètres** > **API & Webhooks**
    - Enter your webhook URL: `https://yourdomain.com/api/webhooks/jeko`
@@ -81,7 +93,22 @@ NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
    - Copy your **Webhook Secret** and add it to `.env.local` as `JEKO_WEBHOOK_SECRET`
    - The webhook endpoint will automatically verify signatures and update order status when payments are completed
 
-6. Run the development server:
+7. Configure Twilio WhatsApp (Optional - for payment confirmations):
+   - Sign up for a [Twilio account](https://www.twilio.com/try-twilio) (free trial available)
+   - For testing, use Twilio's WhatsApp sandbox:
+     - Go to **Messaging** > **Try it out** > **Send a WhatsApp message**
+     - Get your sandbox number (e.g., `whatsapp:+14155238886`)
+     - Send the join code to your sandbox number from your WhatsApp
+   - For production:
+     - Request WhatsApp approval in Twilio Console
+     - Get your approved WhatsApp Business number
+   - Add your Twilio credentials to `.env.local`:
+     - `TWILIO_ACCOUNT_SID`: From Twilio Console dashboard
+     - `TWILIO_AUTH_TOKEN`: From Twilio Console dashboard
+     - `TWILIO_WHATSAPP_FROM`: Your Twilio WhatsApp number (e.g., `whatsapp:+14155238886`)
+   - WhatsApp confirmation messages will be sent automatically when payments are confirmed via webhook
+
+8. Run the development server:
 ```bash
 npm run dev
 ```
