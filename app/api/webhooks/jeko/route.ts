@@ -9,6 +9,11 @@ const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM
 const DANIEL_WHATSAPP = process.env.DANIEL_WHATSAPP
 const PHILIPPE_WHATSAPP = process.env.PHILIPPE_WHATSAPP
 
+// WhatsApp Template Content SIDs (from Twilio Content Template Builder)
+// These templates must be pre-approved by WhatsApp
+const TWILIO_WHATSAPP_TEMPLATE_CUSTOMER_CONFIRMATION = process.env.TWILIO_WHATSAPP_TEMPLATE_CUSTOMER_CONFIRMATION
+const TWILIO_WHATSAPP_TEMPLATE_ADMIN_NOTIFICATION = process.env.TWILIO_WHATSAPP_TEMPLATE_ADMIN_NOTIFICATION
+
 // Admin phone numbers for order notifications
 const ADMIN_PHONE_NUMBERS = [
   DANIEL_WHATSAPP,
@@ -84,7 +89,30 @@ function verifySignature(
 }
 
 /**
+ * Send WhatsApp message using template (Content SID)
+ * @param client Twilio client
+ * @param toNumber Recipient WhatsApp number
+ * @param contentSid Content Template SID
+ * @param contentVariables Template variables as object
+ * @returns Promise with Twilio message result
+ */
+async function sendWhatsAppTemplate(
+  client: any,
+  toNumber: string,
+  contentSid: string,
+  contentVariables: Record<string, string>
+): Promise<any> {
+  return await client.messages.create({
+    from: TWILIO_WHATSAPP_FROM,
+    to: toNumber,
+    contentSid: contentSid,
+    contentVariables: JSON.stringify(contentVariables),
+  })
+}
+
+/**
  * Send WhatsApp payment confirmation message via Twilio
+ * Uses template if configured, otherwise falls back to freeform message
  * @param order Order object with customer information
  * @param amount Amount in XOF (from webhook payload)
  * @returns Promise with Twilio message result or null if failed/skipped
@@ -102,49 +130,50 @@ async function sendWhatsAppConfirmation(order: any, amount: number): Promise<any
     return null
   }
 
-  try {
-    // Dynamically import Twilio to avoid requiring it if not configured
-    const twilio = await import('twilio')
-    const client = twilio.default(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    
-    // Format phone number
-    // Remove spaces and any existing + prefix
-    let phoneNumber = order.customer_phone.replace(/\s+/g, '').replace(/^\+/, '')
-    
-    // If phone doesn't start with country code, assume Côte d'Ivoire (+225)
-    if (!phoneNumber.startsWith('225')) {
-      phoneNumber = '225' + phoneNumber
+  // Dynamically import Twilio to avoid requiring it if not configured
+  const twilio = await import('twilio')
+  const client = twilio.default(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+  
+  // Format phone number
+  // Remove spaces and any existing + prefix
+  let phoneNumber = order.customer_phone.replace(/\s+/g, '').replace(/^\+/, '')
+  
+  // If phone doesn't start with country code, assume Côte d'Ivoire (+225)
+  if (!phoneNumber.startsWith('225')) {
+    phoneNumber = '225' + phoneNumber
+  }
+  
+  const toNumber = `whatsapp:+${phoneNumber}`
+
+  // Format amount in XOF (convert from cents if needed)
+  const amountInXOF = amount / 100
+
+  // Try to use template if configured
+  if (TWILIO_WHATSAPP_TEMPLATE_CUSTOMER_CONFIRMATION) {
+    // Template format:
+    // ✅ Paiement confirmé!
+    // Votre commande {{1}} a été payée avec succès.
+    // Montant: {{2}} XOF
+    // Nous traiterons votre commande sous peu et vous contacterons pour la livraison.
+    // Merci pour votre achat! 🎉
+    const contentVariables = {
+      '1': `#${order.order_number}`, // Order number with # prefix
+      '2': `${amountInXOF.toLocaleString('fr-FR')} XOF`, // Amount formatted
     }
-    
-    const toNumber = `whatsapp:+${phoneNumber}`
 
-    // Format amount in XOF (convert from cents if needed)
-    const amountInXOF = amount / 100
-
-    // Create confirmation message in French
-    const message = `✅ Paiement confirmé!
-
-Votre commande #${order.order_number} a été payée avec succès.
-
-Montant: ${amountInXOF.toLocaleString('fr-FR')} XOF
-
-Nous traiterons votre commande sous peu et vous contacterons pour la livraison.
-
-Merci pour votre achat! 🎉`
-
-    // Send WhatsApp message
-    const result = await client.messages.create({
-      from: TWILIO_WHATSAPP_FROM,
-      to: toNumber,
-      body: message,
-    })
-
-    console.log('WhatsApp confirmation sent successfully:', result.sid)
-    return result
-  } catch (error: any) {
-    // Don't fail the webhook if WhatsApp fails - just log the error
-    console.error('Error sending WhatsApp confirmation:', error.message || error)
-    return null
+    try {
+      const result = await sendWhatsAppTemplate(
+        client,
+        toNumber,
+        TWILIO_WHATSAPP_TEMPLATE_CUSTOMER_CONFIRMATION,
+        contentVariables
+      )
+      console.log('WhatsApp template confirmation sent successfully:', result.sid)
+      return result
+    } catch (templateError: any) {
+      console.warn('Template message failed:', templateError.message)
+      // Fall through to freeform message
+    }
   }
 }
 
@@ -171,9 +200,6 @@ async function sendAdminNotifications(order: any, orderItems: any[], amount: num
     const twilio = await import('twilio')
     const client = twilio.default(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
     
-    // Format amount in XOF
-    const amountInXOF = amount / 100
-
     // Format order items summary
     const itemsSummary = orderItems.map(item => {
       const itemTotal = item.product_price * item.quantity
@@ -187,48 +213,66 @@ async function sendAdminNotifications(order: any, orderItems: any[], amount: num
         ? `${order.shipping_address.street || ''}, ${order.shipping_address.city || ''}`.trim()
         : 'Non spécifiée'
 
-    // Create admin notification message
-    const message = `🛒 NOUVELLE VENTE
-
-Commande: #${order.order_number}
-Date: ${new Date(order.created_at).toLocaleString('fr-FR')}
-
-👤 CLIENT
-Nom: ${order.customer_name || 'Non spécifié'}
-Téléphone: ${order.customer_phone || 'Non spécifié'}
-Adresse: ${shippingAddress}
-
-📦 ARTICLES
-${itemsSummary}
-
-💰 TOTAL: ${amountInXOF.toLocaleString('fr-FR')} XOF
-
-💳 Méthode: ${order.payment_method || 'Non spécifiée'}`
-
     // Send to all admin numbers
     const results = await Promise.allSettled(
-      ADMIN_PHONE_NUMBERS.map(async (phoneNumber) => {
+      ADMIN_PHONE_NUMBERS.map(async (phoneNumber, index) => {
         // Format phone number (ensure it starts with +)
         const formattedNumber = phoneNumber.startsWith('+') 
           ? phoneNumber 
           : `+${phoneNumber}`
         const toNumber = `whatsapp:${formattedNumber}`
 
-        const result = await client.messages.create({
-          from: TWILIO_WHATSAPP_FROM,
-          to: toNumber,
-          body: message,
-        })
+        try {
+          // Try to use template if configured
+          if (TWILIO_WHATSAPP_TEMPLATE_ADMIN_NOTIFICATION) {
+            // Template format:
+            // 🛒 NOUVELLE VENTE
+            // Commande: {{1}}
+            // 👤 CLIENT
+            // Nom: {{2}}
+            // Téléphone: {{3}}
+            // Adresse: {{4}}
+            // 📦 ARTICLES
+            // {{5}}
+            // Go to Admin dashboard for more info.
+            const contentVariables = {
+              '1': `#${order.order_number}`, // Order number with # prefix
+              '2': order.customer_name || 'Non spécifié', // Customer name
+              '3': order.customer_phone || 'Non spécifié', // Customer phone
+              '4': shippingAddress, // Shipping address
+              '5': itemsSummary, // Items summary (formatted list)
+            }
 
-        console.log(`Admin notification sent to ${formattedNumber}:`, result.sid)
-        return { phoneNumber: formattedNumber, result }
+            const result = await sendWhatsAppTemplate(
+              client,
+              toNumber,
+              TWILIO_WHATSAPP_TEMPLATE_ADMIN_NOTIFICATION,
+              contentVariables
+            )
+            console.log(`Admin template notification sent to ${formattedNumber}:`, result.sid)
+            return { phoneNumber: formattedNumber, result }
+          }
+        } catch (error: any) {
+          console.error(`Error sending admin notification to ${formattedNumber}:`, error.message)
+          // Don't fail the webhook if admin notification fails
+          return { 
+            phoneNumber: formattedNumber, 
+            error: error.message,
+            reason: 'error_sending_notification',
+            skipped: true 
+          }
+        }
       })
     )
 
-    // Log any failures
+    // Log any failures or skipped messages
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
         console.error(`Failed to send admin notification to ${ADMIN_PHONE_NUMBERS[index]}:`, result.reason)
+      } else if (result.status === 'fulfilled' && result.value?.skipped) {
+        const reason = result.value.reason || 'unknown'
+        const errorMsg = result.value.error ? ` - ${result.value.error}` : ''
+        console.warn(`Skipped admin notification to ${ADMIN_PHONE_NUMBERS[index]}: ${reason}${errorMsg}`)
       }
     })
 

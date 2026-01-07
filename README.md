@@ -115,7 +115,25 @@ NEXT_PUBLIC_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
      - `TWILIO_ACCOUNT_SID`: From Twilio Console dashboard
      - `TWILIO_AUTH_TOKEN`: From Twilio Console dashboard
      - `TWILIO_WHATSAPP_FROM`: Your Twilio WhatsApp number (e.g., `whatsapp:+14155238886`)
+   - **Create WhatsApp Message Templates** (Required for messages outside 24-hour window):
+     - Go to **Messaging** > **Content Template Builder** in Twilio Console
+     - Create a template for customer payment confirmation:
+       - Name: `payment_confirmation` (lowercase, underscores)
+       - Language: French
+       - Content: Use variables like `{{1}}` for order number, `{{2}}` for amount
+       - Example: `Paiement confirmé! Votre commande {{1}} a été payée. Montant: {{2}}`
+     - Create a template for admin notifications:
+       - Name: `admin_new_sale` (lowercase, underscores)
+       - Language: French
+       - Content: Use variables for order details
+       - Example: `Nouvelle vente! Commande: {{1}}, Client: {{2}}, Total: {{4}}`
+     - Submit templates for WhatsApp approval (typically 48 hours)
+     - Once approved, get the Content SID from each template
+     - Add to `.env.local`:
+       - `TWILIO_WHATSAPP_TEMPLATE_CUSTOMER_CONFIRMATION`: Content SID for customer template
+       - `TWILIO_WHATSAPP_TEMPLATE_ADMIN_NOTIFICATION`: Content SID for admin template
    - WhatsApp confirmation messages will be sent automatically when payments are confirmed via webhook
+   - Templates work both inside and outside the 24-hour messaging window
 
 9. Run the development server:
 ```bash
