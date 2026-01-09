@@ -47,8 +47,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminSidebar />
-      <main className="lg:pl-64">
-        <div className="p-8">
+      <main className="lg:pl-64 pt-16 lg:pt-0">
+        <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>
       </main>

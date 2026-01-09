@@ -71,14 +71,15 @@ export default function AdminProductsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Products</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold">Products</h1>
         <Link href="/admin/products/new">
-          <Button>Add Product</Button>
+          <Button className="w-full sm:w-auto">Add Product</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      {/* Desktop Table View */}
+      <div className="hidden lg:block bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -145,6 +146,61 @@ export default function AdminProductsPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4">
+        {products.length === 0 ? (
+          <div className="bg-white rounded-lg shadow p-6 text-center text-sm text-gray-500">
+            No products found
+          </div>
+        ) : (
+          products.map((product) => (
+            <div key={product.id} className="bg-white rounded-lg shadow p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-1">{product.name}</h3>
+                  <p className="text-xs font-mono text-gray-500">{product.id.substring(0, 8)}...</p>
+                </div>
+                <div className="flex gap-2 ml-4">
+                  <Link href={`/admin/products/${product.id}/edit`} className="text-primary-600 hover:text-primary-900 text-sm font-medium">
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(product.id)}
+                    className="text-red-600 hover:text-red-900 text-sm font-medium"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Price:</span>
+                  <span className="font-medium">{formatPrice(Number(product.price))}</span>
+                </div>
+                {product.promo_price && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Promo Price:</span>
+                    <span className="text-red-600 font-semibold">{formatPrice(Number(product.promo_price))}</span>
+                  </div>
+                )}
+                {product.bundle_pricing && Array.isArray(product.bundle_pricing) && product.bundle_pricing.length > 0 && (
+                  <div>
+                    <span className="text-gray-600">Bundle Pricing:</span>
+                    <div className="mt-1 space-y-1">
+                      {product.bundle_pricing.map((bundle, idx) => (
+                        <div key={idx} className="text-xs text-gray-700">
+                          {bundle.quantity}x: {formatPrice(Number(bundle.price))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   )

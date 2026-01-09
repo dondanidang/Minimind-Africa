@@ -133,8 +133,8 @@ export default function EditProductPage() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Edit Product</h1>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Edit Product</h1>
         <p className="mt-2 text-sm text-gray-600">
           Update product information, pricing, images, and content
         </p>
