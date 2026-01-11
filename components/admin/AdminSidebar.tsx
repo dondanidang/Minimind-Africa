@@ -24,8 +24,8 @@ export function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
+      {/* Mobile/Tablet Header */}
+      <div className="admin-lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
         <div className="flex items-center justify-between h-16 px-4">
           <h1 className="text-lg font-bold text-primary-600">Admin Portal</h1>
           <button
@@ -49,7 +49,7 @@ export function AdminSidebar() {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"
+          className="admin-lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -58,11 +58,11 @@ export function AdminSidebar() {
       <div
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 lg:static lg:inset-0`}
+        } admin-lg:translate-x-0 admin-lg:static admin-lg:inset-0`}
       >
         <div className="flex flex-col h-full">
           {/* Desktop Header */}
-          <div className="hidden lg:flex items-center justify-center h-16 border-b border-gray-200">
+          <div className="hidden admin-lg:flex items-center justify-center h-16 border-b border-gray-200">
             <h1 className="text-xl font-bold text-primary-600">Admin Portal</h1>
           </div>
           

@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        'admin-lg': '1600px', // Custom breakpoint for admin table view
+      },
       colors: {
         primary: {
           50: '#faf5ff',

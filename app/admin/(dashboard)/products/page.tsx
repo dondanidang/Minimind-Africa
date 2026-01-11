@@ -78,8 +78,8 @@ export default function AdminProductsPage() {
         </Link>
       </div>
 
-      {/* Desktop Table View */}
-      <div className="hidden lg:block bg-white rounded-lg shadow overflow-hidden">
+      {/* Desktop Table View - Only show on screens 1600px and wider */}
+      <div className="hidden admin-lg:block bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -148,8 +148,8 @@ export default function AdminProductsPage() {
         </table>
       </div>
 
-      {/* Mobile Card View */}
-      <div className="lg:hidden space-y-4">
+      {/* Mobile/Tablet Card View - Show on all screens below 1600px */}
+      <div className="block admin-lg:hidden space-y-4">
         {products.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-6 text-center text-sm text-gray-500">
             No products found
