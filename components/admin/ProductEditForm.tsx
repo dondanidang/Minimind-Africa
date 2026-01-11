@@ -90,6 +90,7 @@ export function ProductEditForm({
         name: variantName.trim(),
         price,
         stock,
+        images: [],
         created_at: new Date().toISOString(),
       }
       onFormDataChange({
@@ -100,6 +101,21 @@ export function ProductEditForm({
       setVariantPrice('')
       setVariantStock('')
     }
+  }
+
+  const updateVariantImages = (variantId: string, imagesText: string) => {
+    // Convert newline-separated URLs to array
+    const images = imagesText
+      .split('\n')
+      .map(url => url.trim())
+      .filter(Boolean)
+    
+    onFormDataChange({
+      ...formData,
+      variants: formData.variants.map(v => 
+        v.id === variantId ? { ...v, images } : v
+      ),
+    })
   }
 
   const removeVariant = (variantId: string) => {
@@ -368,23 +384,43 @@ export function ProductEditForm({
               </Button>
             </div>
             {formData.variants.length > 0 && (
-              <div className="space-y-2 mt-4">
+              <div className="space-y-4 mt-4">
                 {formData.variants.map((variant) => (
-                  <div key={variant.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex-1">
-                      <span className="text-sm font-medium text-gray-700">{variant.name}</span>
-                      <div className="flex gap-4 mt-1 text-xs text-gray-600">
-                        <span>Price: {variant.price !== null ? formatPrice(variant.price) : 'Product price'}</span>
-                        <span>Stock: {variant.stock}</span>
+                  <div key={variant.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <span className="text-sm font-medium text-gray-700">{variant.name}</span>
+                        <div className="flex gap-4 mt-1 text-xs text-gray-600">
+                          <span>Price: {variant.price !== null ? formatPrice(variant.price) : 'Product price'}</span>
+                          <span>Stock: {variant.stock}</span>
+                        </div>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(variant.id)}
+                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                      >
+                        Remove
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeVariant(variant.id)}
-                      className="text-red-600 hover:text-red-800 text-sm font-medium"
-                    >
-                      Remove
-                    </button>
+                    <div className="border-t border-gray-200 pt-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Variant Images
+                      </label>
+                      <textarea
+                        value={(variant.images || []).join('\n')}
+                        onChange={(e) => updateVariantImages(variant.id, e.target.value)}
+                        rows={4}
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                      />
+                      <p className="mt-2 text-xs text-gray-500">
+                        Enter image URLs, one per line. These images will appear in the product gallery when this variant is selected.
+                      </p>
+                      {variant.images && variant.images.length > 0 && (
+                        <AssetsGallery assets={variant.images} title={`${variant.name} Images`} />
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

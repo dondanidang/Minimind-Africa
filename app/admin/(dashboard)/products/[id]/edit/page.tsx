@@ -154,6 +154,7 @@ export default function EditProductPage() {
               name: variant.name,
               price: variant.price,
               stock: variant.stock,
+              images: variant.images || null,
             })
           if (insertError) {
             variantErrors.push(`Failed to save variant "${variant.name}": ${insertError.message}`)
@@ -166,6 +167,7 @@ export default function EditProductPage() {
               name: variant.name,
               price: variant.price,
               stock: variant.stock,
+              images: variant.images || null,
             })
             .eq('id', variant.id)
           if (updateError) {

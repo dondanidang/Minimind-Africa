@@ -28,6 +28,13 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     setShowNextArrow(scrollLeft < scrollWidth - clientWidth - 10) // 10px threshold
   }
 
+  // Update selected image when images array changes (e.g., variant change)
+  useEffect(() => {
+    if (images.length > 0) {
+      setSelectedImage(images[0])
+    }
+  }, [images])
+
   // Setup scroll listener and initial scroll position
   useEffect(() => {
     const container = thumbnailContainerRef.current

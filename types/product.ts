@@ -29,6 +29,7 @@ export type ProductVariant = {
   name: string
   price: number | null
   stock: number
+  images?: string[]
   created_at: string
 }
 

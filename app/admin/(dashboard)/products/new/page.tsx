@@ -84,6 +84,7 @@ export default function NewProductPage() {
           name: variant.name,
           price: variant.price,
           stock: variant.stock,
+          images: variant.images || null,
         }))
 
         const { error: variantsError } = await supabase

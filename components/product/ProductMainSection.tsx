@@ -104,6 +104,11 @@ export function ProductMainSection({
 
   const selectedVariant = selectedVariantId ? variants.find(v => v.id === selectedVariantId) : null
 
+  // Get images to display (variant images if variant is selected and has images, otherwise product images)
+  const displayImages = selectedVariant && selectedVariant.images && selectedVariant.images.length > 0
+    ? selectedVariant.images
+    : product.images
+
   // Get effective price and stock (for display purposes)
   const effectivePrice = getDisplayPrice(product)
   const effectiveStock = product.stock
@@ -214,7 +219,7 @@ export function ProductMainSection({
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
         {/* Image Gallery */}
-        <ProductGallery images={product.images} productName={product.name} />
+        <ProductGallery images={displayImages} productName={product.name} />
         
         {/* Product Info */}
         <div className="space-y-6">
