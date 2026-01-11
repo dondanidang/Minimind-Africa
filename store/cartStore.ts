@@ -11,9 +11,9 @@ type CartStore = {
   addItem: (product: Product, quantity?: number, variantId?: string | null) => void
   addBundle: (product: Product, bundleQuantity: number, bundlePrice: number, variantSelections: Array<{ variant_id: string | null; variant_name: string }>) => void
   removeItem: (productId: string, variantId?: string | null) => void
-  removeBundle: (productId: string) => void
+  removeBundle: (productId: string, bundleQuantity?: number, variantSelections?: Array<{ variant_id: string | null; variant_name: string }>) => void
   updateQuantity: (productId: string, quantity: number, variantId?: string | null) => void
-  updateBundleQuantity: (productId: string, quantity: number) => void
+  updateBundleQuantity: (productId: string, quantity: number, bundleQuantity?: number, variantSelections?: Array<{ variant_id: string | null; variant_name: string }>) => void
   clearCart: () => void
   getTotal: () => number
   getItemCount: () => number
@@ -128,12 +128,37 @@ export const useCartStore = create<CartStore>()(
         })
       },
       
-      removeBundle: (productId) => {
-        set({
-          items: get().items.filter(item => 
-            !(item.product_id === productId && item.is_bundle)
-          ),
-        })
+      removeBundle: (productId, bundleQuantity, variantSelections) => {
+        const items = get().items
+        
+        // Helper function to compare variant selections arrays
+        const variantSelectionsMatch = (sel1: Array<{ variant_id: string | null; variant_name: string }> | undefined, sel2: Array<{ variant_id: string | null; variant_name: string }> | undefined) => {
+          if (!sel1 || !sel2 || sel1.length !== sel2.length) return false
+          return sel1.every((s1, index) => {
+            const s2 = sel2[index]
+            return s1.variant_id === s2.variant_id && s1.variant_name === s2.variant_name
+          })
+        }
+        
+        // If bundleQuantity and variantSelections are provided, match exactly
+        // Otherwise, remove all bundles for this product (backward compatibility)
+        if (bundleQuantity !== undefined && variantSelections !== undefined) {
+          set({
+            items: items.filter(item => 
+              !(item.product_id === productId && 
+                item.is_bundle &&
+                item.bundle_quantity === bundleQuantity &&
+                variantSelectionsMatch(item.bundle_variant_selections, variantSelections))
+            ),
+          })
+        } else {
+          // Remove all bundles for this product (old behavior)
+          set({
+            items: items.filter(item => 
+              !(item.product_id === productId && item.is_bundle)
+            ),
+          })
+        }
       },
       
       updateQuantity: (productId, quantity, variantId = null) => {
@@ -151,19 +176,44 @@ export const useCartStore = create<CartStore>()(
         })
       },
       
-      updateBundleQuantity: (productId, quantity) => {
+      updateBundleQuantity: (productId, quantity, bundleQuantity, variantSelections) => {
         if (quantity <= 0) {
-          get().removeBundle(productId)
+          get().removeBundle(productId, bundleQuantity, variantSelections)
           return
         }
         
-        set({
-          items: get().items.map(item =>
-            item.product_id === productId && item.is_bundle
-              ? { ...item, quantity } 
-              : item
-          ),
-        })
+        // Helper function to compare variant selections arrays
+        const variantSelectionsMatch = (sel1: Array<{ variant_id: string | null; variant_name: string }> | undefined, sel2: Array<{ variant_id: string | null; variant_name: string }> | undefined) => {
+          if (!sel1 || !sel2 || sel1.length !== sel2.length) return false
+          return sel1.every((s1, index) => {
+            const s2 = sel2[index]
+            return s1.variant_id === s2.variant_id && s1.variant_name === s2.variant_name
+          })
+        }
+        
+        // If bundleQuantity and variantSelections are provided, match exactly
+        // Otherwise, update all bundles for this product (backward compatibility)
+        if (bundleQuantity !== undefined && variantSelections !== undefined) {
+          set({
+            items: get().items.map(item =>
+              item.product_id === productId && 
+              item.is_bundle &&
+              item.bundle_quantity === bundleQuantity &&
+              variantSelectionsMatch(item.bundle_variant_selections, variantSelections)
+                ? { ...item, quantity } 
+                : item
+            ),
+          })
+        } else {
+          // Update all bundles for this product (old behavior)
+          set({
+            items: get().items.map(item =>
+              item.product_id === productId && item.is_bundle
+                ? { ...item, quantity } 
+                : item
+            ),
+          })
+        }
       },
       
       clearCart: () => {

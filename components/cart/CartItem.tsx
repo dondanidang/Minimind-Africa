@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { QuantitySelector } from '@/components/product/QuantitySelector'
-import { formatPrice, getPriceForQuantity, getDisplayPrice } from '@/lib/utils'
+gstimport { formatPrice, getPriceForQuantity, getDisplayPrice } from '@/lib/utils'
 import { useCartStore } from '@/store/cartStore'
 import type { CartItem as CartItemType } from '@/types/cart'
 
@@ -98,7 +98,7 @@ export function CartItem({ item }: CartItemProps) {
         <div className="flex items-center space-x-4">
           <QuantitySelector
             quantity={item.quantity}
-            onQuantityChange={(newQuantity) => updateBundleQuantity(item.product_id, newQuantity)}
+            onQuantityChange={(newQuantity) => updateBundleQuantity(item.product_id, newQuantity, item.bundle_quantity, item.bundle_variant_selections)}
             max={999}
           />
           
@@ -114,7 +114,7 @@ export function CartItem({ item }: CartItemProps) {
           </div>
           
           <button
-            onClick={() => removeBundle(item.product_id)}
+            onClick={() => removeBundle(item.product_id, item.bundle_quantity, item.bundle_variant_selections)}
             className="text-gray-400 hover:text-red-600 transition-colors"
             aria-label="Supprimer"
           >
