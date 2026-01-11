@@ -59,6 +59,8 @@ export function ProductMainSection({
   // When bundle quantity changes, reset variant selections and auto-select first variant
   useEffect(() => {
     if (isBundleSelected && quantity > 0 && variants.length > 0) {
+      // Clear standard variant selection when bundle is selected
+      setSelectedVariantId(null)
       // Auto-select first available variant for each item, or first variant if all out of stock
       const firstVariant = variants.find(v => v.stock > 0) || variants[0]
       if (firstVariant) {
@@ -67,10 +69,22 @@ export function ProductMainSection({
         setBundleVariantSelections(Array(quantity).fill(null))
       }
     } else if (isBundleSelected && quantity > 0) {
+      // Clear standard variant selection when bundle is selected
+      setSelectedVariantId(null)
       // No variants, just reset to array of nulls
       setBundleVariantSelections(Array(quantity).fill(null))
     }
   }, [quantity, isBundleSelected, variants])
+  
+  // When standard variant is selected, reset quantity to 1 (no bundle)
+  const handleStandardVariantChange = (variantId: string | null) => {
+    if (isBundleSelected) {
+      // Reset quantity to 1 when selecting a standard variant (exits bundle mode)
+      setQuantity(1)
+      setBundleVariantSelections([])
+    }
+    setSelectedVariantId(variantId)
+  }
 
   // Reset and select first variant when product changes or on mount
   useEffect(() => {
@@ -258,7 +272,7 @@ export function ProductMainSection({
                   <ProductVariantSelector
                     variants={variants}
                     selectedVariantId={selectedVariantId}
-                    onVariantChange={setSelectedVariantId}
+                    onVariantChange={handleStandardVariantChange}
                     basePrice={getDisplayPrice(product)}
                     horizontal={true}
                   />

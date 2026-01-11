@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { QuantitySelector } from '@/components/product/QuantitySelector'
-gstimport { formatPrice, getPriceForQuantity, getDisplayPrice } from '@/lib/utils'
+import { formatPrice, getPriceForQuantity, getDisplayPrice } from '@/lib/utils'
 import { useCartStore } from '@/store/cartStore'
 import type { CartItem as CartItemType } from '@/types/cart'
 

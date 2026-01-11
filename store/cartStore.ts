@@ -26,13 +26,6 @@ export const useCartStore = create<CartStore>()(
       
       addItem: (product, quantity = 1, variantId = null) => {
         const items = get().items
-        // Don't add regular items if there's already a bundle for this product
-        const existingBundle = items.find(item => 
-          item.product_id === product.id && item.is_bundle
-        )
-        if (existingBundle) {
-          return // Bundle exists, don't add individual items
-        }
         
         // Find existing item with same product and variant
         const existingItem = items.find(item => 
@@ -84,12 +77,9 @@ export const useCartStore = create<CartStore>()(
         )
         
         if (existingBundle) {
-          // Update existing bundle quantity (and remove any individual items)
-          const filteredItems = items.filter(item => 
-            item.product_id !== product.id || item.is_bundle
-          )
+          // Update existing bundle quantity (keep individual items)
           set({
-            items: filteredItems.map(item =>
+            items: items.map(item =>
               item.product_id === product.id && 
               item.is_bundle &&
               item.bundle_quantity === bundleQuantity &&
@@ -99,14 +89,9 @@ export const useCartStore = create<CartStore>()(
             ),
           })
         } else {
-          // Remove any individual items for this product (can't have both bundle and individual)
-          // But keep other bundles with different configurations
-          const filteredItems = items.filter(item => 
-            item.product_id !== product.id || item.is_bundle
-          )
-          // Add new bundle
+          // Add new bundle (keep individual items - allow both bundle and individual)
           set({
-            items: [...filteredItems, { 
+            items: [...items, { 
               product_id: product.id,
               variant_id: null,
               quantity: 1,
