@@ -20,6 +20,7 @@ export type Product = {
   created_at: string
   updated_at: string
   page_content?: ProductPageContent | null
+  variants?: ProductVariant[]
 }
 
 export type ProductVariant = {

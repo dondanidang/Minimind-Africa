@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ProductEditForm } from '@/components/admin/ProductEditForm'
 import type { ProductPageContent } from '@/types/productPageContent'
+import type { ProductVariant } from '@/types/product'
 
 export default function EditProductPage() {
   const router = useRouter()
@@ -24,6 +25,7 @@ export default function EditProductPage() {
     images: '' as string,
     assets: [] as string[],
     bundle_pricing: [] as Array<{ quantity: number; price: number }>,
+    variants: [] as ProductVariant[],
     page_content: null as ProductPageContent | null,
   })
 
@@ -33,14 +35,15 @@ export default function EditProductPage() {
 
   const fetchProduct = async () => {
     try {
-      const { data: product, error } = await supabase
+      // Fetch product
+      const { data: product, error: productError } = await supabase
         .from('products')
         .select('*')
         .eq('id', productId)
         .single()
       
-      if (error) {
-        console.error('Error fetching product:', error)
+      if (productError) {
+        console.error('Error fetching product:', productError)
         alert('Error loading product')
         return
       }
@@ -48,6 +51,17 @@ export default function EditProductPage() {
       if (!product) {
         alert('Product not found')
         return
+      }
+
+      // Fetch variants
+      const { data: variants, error: variantsError } = await supabase
+        .from('product_variants')
+        .select('*')
+        .eq('product_id', productId)
+        .order('created_at', { ascending: true })
+
+      if (variantsError) {
+        console.error('Error fetching variants:', variantsError)
       }
       
       setFormData({
@@ -61,6 +75,7 @@ export default function EditProductPage() {
         images: Array.isArray(product.images) ? product.images.join('\n') : '',
         assets: (product as any).assets || [],
         bundle_pricing: product.bundle_pricing || [],
+        variants: (variants as ProductVariant[]) || [],
         page_content: product.page_content || null,
       })
     } catch (error) {
@@ -97,14 +112,71 @@ export default function EditProductPage() {
         updated_at: new Date().toISOString(),
       }
 
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('products')
         .update(updateData)
         .eq('id', productId)
 
-      if (error) {
-        console.error('Error updating product:', error)
-        alert(error.message || 'Error updating product')
+      if (updateError) {
+        console.error('Error updating product:', updateError)
+        alert(updateError.message || 'Error updating product')
+        return
+      }
+
+      // Handle variants
+      // Get existing variants from database
+      const { data: existingVariants } = await supabase
+        .from('product_variants')
+        .select('id')
+        .eq('product_id', productId)
+
+      const existingIds = new Set((existingVariants || []).map(v => v.id))
+      const formVariantIds = new Set(formData.variants.map(v => v.id).filter(id => !id.startsWith('temp-')))
+      
+      // Delete removed variants
+      const toDelete = Array.from(existingIds).filter(id => !formVariantIds.has(id))
+      if (toDelete.length > 0) {
+        await supabase
+          .from('product_variants')
+          .delete()
+          .in('id', toDelete)
+      }
+
+      // Upsert variants (insert new, update existing)
+      const variantErrors: string[] = []
+      for (const variant of formData.variants) {
+        if (variant.id.startsWith('temp-')) {
+          // New variant - insert
+          const { error: insertError } = await supabase
+            .from('product_variants')
+            .insert({
+              product_id: productId,
+              name: variant.name,
+              price: variant.price,
+              stock: variant.stock,
+            })
+          if (insertError) {
+            variantErrors.push(`Failed to save variant "${variant.name}": ${insertError.message}`)
+          }
+        } else {
+          // Existing variant - update
+          const { error: updateError } = await supabase
+            .from('product_variants')
+            .update({
+              name: variant.name,
+              price: variant.price,
+              stock: variant.stock,
+            })
+            .eq('id', variant.id)
+          if (updateError) {
+            variantErrors.push(`Failed to update variant "${variant.name}": ${updateError.message}`)
+          }
+        }
+      }
+
+      if (variantErrors.length > 0) {
+        console.error('Error saving variants:', variantErrors)
+        alert(`Error saving variants:\n${variantErrors.join('\n')}`)
         return
       }
 

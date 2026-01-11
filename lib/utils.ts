@@ -51,17 +51,22 @@ export function getBundlePrice(
 
 export function getPriceForQuantity(
   product: { price: number; promo_price?: number | null; bundle_pricing?: Array<{ quantity: number; price: number }> | null },
-  quantity: number
+  quantity: number,
+  variant?: { price: number | null } | null
 ): number {
-  // Check bundle pricing first
+  // Use variant price if provided and not null
+  const basePrice = variant && variant.price !== null 
+    ? variant.price 
+    : getDisplayPrice(product)
+  
+  // Check bundle pricing first (bundle pricing applies to total quantity, not per-variant)
   const bundlePrice = getBundlePrice(product.bundle_pricing, quantity)
   if (bundlePrice !== null) {
     return bundlePrice
   }
   
-  // Fall back to regular or promo price
-  const unitPrice = getDisplayPrice(product)
-  return unitPrice * quantity
+  // Fall back to variant or product price
+  return basePrice * quantity
 }
 
 export function calculateBundleSavings(

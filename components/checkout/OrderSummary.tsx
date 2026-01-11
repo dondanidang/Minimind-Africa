@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { formatPrice, getPriceForQuantity } from '@/lib/utils'
+import { formatPrice, getPriceForQuantity, getDisplayPrice } from '@/lib/utils'
 import { useCartStore } from '@/store/cartStore'
 
 export function OrderSummary() {
@@ -12,7 +12,33 @@ export function OrderSummary() {
   // Calculate original total (without discounts) and savings
   const originalTotal = items.reduce((sum, item) => {
     if (!item.product) return sum
-    return sum + item.product.price * item.quantity
+    // For bundles, calculate original price (individual item prices)
+    if (item.is_bundle && item.bundle_price !== undefined) {
+      let bundleOriginalPrice = 0
+      if (item.bundle_variant_selections && item.product.variants) {
+        // Sum up individual variant prices
+        const variantPrices = item.bundle_variant_selections.map(selection => {
+          if (selection.variant_id) {
+            const variant = item.product.variants?.find(v => v.id === selection.variant_id)
+            if (variant && variant.price !== null) {
+              return variant.price
+            }
+          }
+          // Use product price if variant price is null or variant not found
+          return getDisplayPrice(item.product)
+        })
+        bundleOriginalPrice = variantPrices.reduce((sum, price) => sum + price, 0)
+      } else {
+        // No variants, use product price * bundle_quantity
+        bundleOriginalPrice = getDisplayPrice(item.product) * (item.bundle_quantity || 1)
+      }
+      return sum + bundleOriginalPrice * item.quantity
+    }
+    // For regular items, use variant price if available, otherwise product price
+    const basePrice = item.variant && item.variant.price !== null 
+      ? item.variant.price 
+      : getDisplayPrice(item.product)
+    return sum + basePrice * item.quantity
   }, 0)
 
   const savings = originalTotal - total
@@ -22,13 +48,56 @@ export function OrderSummary() {
       <h2 className="text-xl font-bold mb-4">Résumé de la commande</h2>
       
       <div className="space-y-4 mb-6">
-        {items.map((item) => {
+        {items.map((item, index) => {
           if (!item.product) return null
           const imageUrl = item.product.images?.[0] || '/placeholder-product.jpg'
-          const subtotal = getPriceForQuantity(item.product, item.quantity)
+          
+          // Handle bundle items
+          let subtotal: number
+          let originalPrice: number | null = null
+          let productDisplayName: string
+          let variantInfo: string | null = null
+          
+          if (item.is_bundle && item.bundle_price !== undefined) {
+            subtotal = item.bundle_price * item.quantity
+            
+            // Calculate original price (what it would cost without bundle discount)
+            if (item.bundle_variant_selections && item.product.variants) {
+              // Sum up individual variant prices
+              const variantPrices = item.bundle_variant_selections.map(selection => {
+                if (selection.variant_id) {
+                  const variant = item.product.variants?.find(v => v.id === selection.variant_id)
+                  if (variant && variant.price !== null) {
+                    return variant.price
+                  }
+                }
+                // Use product price if variant price is null or variant not found
+                return getDisplayPrice(item.product)
+              })
+              originalPrice = variantPrices.reduce((sum, price) => sum + price, 0)
+            } else {
+              // No variants, use product price * bundle_quantity
+              originalPrice = getDisplayPrice(item.product) * (item.bundle_quantity || 1)
+            }
+            
+            productDisplayName = item.product.name
+            if (item.bundle_quantity) {
+              productDisplayName += ` (Pack de ${item.bundle_quantity})`
+            }
+            if (item.bundle_variant_selections && item.bundle_variant_selections.length > 0) {
+              variantInfo = item.bundle_variant_selections.map(s => s.variant_name).join(', ')
+            }
+          } else {
+            // Handle regular items
+            subtotal = getPriceForQuantity(item.product, item.quantity, item.variant || null)
+            productDisplayName = item.product.name
+            if (item.variant) {
+              variantInfo = item.variant.name
+            }
+          }
           
           return (
-            <div key={item.product_id} className="flex items-center space-x-4">
+            <div key={`${item.product_id}-${item.is_bundle ? 'bundle' : item.variant_id || 'none'}-${index}`} className="flex items-center space-x-4">
               <div className="relative w-16 h-16 overflow-hidden rounded-md bg-gray-100 flex-shrink-0">
                 <Image
                   src={imageUrl}
@@ -38,7 +107,10 @@ export function OrderSummary() {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm">{item.product.name}</p>
+                <p className="font-medium text-sm">{productDisplayName}</p>
+                {variantInfo && (
+                  <p className="text-xs text-gray-500">Option: {variantInfo}</p>
+                )}
                 <p className="text-sm text-gray-600">Quantité: {item.quantity}</p>
               </div>
               <p className="font-semibold">

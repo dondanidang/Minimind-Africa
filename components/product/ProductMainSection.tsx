@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ProductGallery } from './ProductGallery'
 import { QuantitySelector } from './QuantitySelector'
 import { AddToCartButton } from './AddToCartButton'
+import { ProductVariantSelector } from './ProductVariantSelector'
 import { Button } from '@/components/ui/Button'
 import { useCartStore } from '@/store/cartStore'
 import { formatPrice, getDisplayPrice, getDiscountPercentage, getPriceForQuantity } from '@/lib/utils'
@@ -25,6 +26,10 @@ export function ProductMainSection({
   pageContent
 }: ProductMainSectionProps) {
   const [quantity, setQuantity] = useState(1)
+  // For bundles: track variant selection per item index
+  const [bundleVariantSelections, setBundleVariantSelections] = useState<Array<string | null>>([])
+  // For non-bundle: single variant selection
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   // Generate random number between 5 and 20 for FOMO urgency message
   // Start with a default value to avoid hydration mismatch, then set random on client
@@ -37,18 +42,149 @@ export function ProductMainSection({
   
   const router = useRouter()
   const addItem = useCartStore(state => state.addItem)
+  const addBundle = useCartStore(state => state.addBundle)
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0
 
   const mainFeatures = pageContent?.mainFeatures ?? []
   const whyThisGame = pageContent?.whyThisGame
+  const variants = product.variants || []
+  
+  // Check if bundle pricing is available
+  const hasBundlePricing = product.bundle_pricing && product.bundle_pricing.length > 0
+  // Check if a bundle is selected (quantity matches a bundle offer)
+  const isBundleSelected = hasBundlePricing && product.bundle_pricing?.some(b => b.quantity === quantity)
+  
+  // When bundle quantity changes, reset variant selections and auto-select first variant
+  useEffect(() => {
+    if (isBundleSelected && quantity > 0 && variants.length > 0) {
+      // Auto-select first available variant for each item, or first variant if all out of stock
+      const firstVariant = variants.find(v => v.stock > 0) || variants[0]
+      if (firstVariant) {
+        setBundleVariantSelections(Array(quantity).fill(firstVariant.id))
+      } else {
+        setBundleVariantSelections(Array(quantity).fill(null))
+      }
+    } else if (isBundleSelected && quantity > 0) {
+      // No variants, just reset to array of nulls
+      setBundleVariantSelections(Array(quantity).fill(null))
+    }
+  }, [quantity, isBundleSelected, variants])
 
-  const handleBuyNow = () => {
-    // Add to cart and redirect to checkout
-    addItem(product, quantity)
+  // Reset and select first variant when product changes or on mount
+  useEffect(() => {
+    // Reset selection when product changes
+    setSelectedVariantId(null)
+    
+    // Select first variant for non-bundle products
+    if (!hasBundlePricing && variants.length > 0) {
+      const firstAvailableVariant = variants.find(v => v.stock > 0) || variants[0]
+      if (firstAvailableVariant) {
+        setSelectedVariantId(firstAvailableVariant.id)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.id, variants.length, hasBundlePricing])
+
+  const selectedVariant = selectedVariantId ? variants.find(v => v.id === selectedVariantId) : null
+
+  // Get effective price and stock (for display purposes)
+  const effectivePrice = getDisplayPrice(product)
+  const effectiveStock = product.stock
+
+  const handleBundleVariantChange = (itemIndex: number, variantId: string | null) => {
+    const newSelections = [...bundleVariantSelections]
+    newSelections[itemIndex] = variantId
+    setBundleVariantSelections(newSelections)
+  }
+
+  const handleAddToCartBundle = () => {
+    // Validate all items have variants selected (if variants exist)
+    if (variants.length > 0) {
+      const missingVariants = bundleVariantSelections.some(sel => sel === null)
+      if (missingVariants) {
+        alert('Veuillez sélectionner une option pour chaque produit dans l\'offre groupée.')
+        return
+      }
+    }
+    
+    // Calculate bundle total price
+    const bundleTotal = getBundleTotal()
+    
+    // Build variant selections array with variant names
+    const variantSelections = bundleVariantSelections.map((variantId) => {
+      if (variantId) {
+        const variant = variants.find(v => v.id === variantId)
+        return {
+          variant_id: variantId,
+          variant_name: variant?.name || 'Unknown'
+        }
+      }
+      return {
+        variant_id: null,
+        variant_name: 'Standard'
+      }
+    })
+    
+    // Add bundle as a single cart item
+    addBundle(product, quantity, bundleTotal, variantSelections)
+  }
+
+  const handleBuyNowBundle = () => {
+    // Validate all items have variants selected (if variants exist)
+    if (variants.length > 0) {
+      const missingVariants = bundleVariantSelections.some(sel => sel === null)
+      if (missingVariants) {
+        alert('Veuillez sélectionner une option pour chaque produit dans l\'offre groupée.')
+        return
+      }
+    }
+    
+    // Calculate bundle total price
+    const bundleTotal = getBundleTotal()
+    
+    // Build variant selections array with variant names
+    const variantSelections = bundleVariantSelections.map((variantId) => {
+      if (variantId) {
+        const variant = variants.find(v => v.id === variantId)
+        return {
+          variant_id: variantId,
+          variant_name: variant?.name || 'Unknown'
+        }
+      }
+      return {
+        variant_id: null,
+        variant_name: 'Standard'
+      }
+    })
+    
+    // Add bundle as a single cart item
+    addBundle(product, quantity, bundleTotal, variantSelections)
+    
     router.push('/checkout')
   }
+
+  const handleBuyNow = () => {
+    // For non-bundle purchases
+    if (variants.length > 0 && !selectedVariantId) {
+      alert('Veuillez sélectionner une option avant de continuer.')
+      return
+    }
+    addItem(product, quantity, selectedVariantId)
+    router.push('/checkout')
+  }
+
+  // Calculate bundle total (using bundle price, not individual item prices)
+  const getBundleTotal = () => {
+    if (!isBundleSelected || !product.bundle_pricing) return 0
+    const bundle = product.bundle_pricing.find(b => b.quantity === quantity)
+    return bundle ? bundle.price : 0
+  }
+
+  // Check if all bundle variants are selected
+  const allBundleVariantsSelected = variants.length === 0 || 
+    (bundleVariantSelections.length === quantity && bundleVariantSelections.every(sel => sel !== null))
 
   // Calculate delivery date (example: 2 days from now)
   const getDeliveryDate = () => {
@@ -94,24 +230,43 @@ export function ProductMainSection({
               </div>
             )}
             
-            <div className="flex items-baseline gap-4 mb-4">
-              <div className="flex flex-col">
-                <div className="flex items-baseline gap-3">
-                  <p className={`text-4xl font-bold ${product.promo_price ? 'text-red-600' : 'text-primary-600'}`}>
-                    {formatPrice(getDisplayPrice(product))}
-                  </p>
-                  {product.promo_price && product.promo_price < product.price && (
-                    <>
-                      <p className="text-2xl text-gray-400 line-through">
-                        {formatPrice(product.price)}
-                      </p>
-                      <span className="text-base font-semibold text-red-600 bg-red-50 px-3 py-1 rounded">
-                        -{getDiscountPercentage(product)}%
-                      </span>
-                    </>
+            <div className="space-y-4">
+              {/* Price Display */}
+              <div className="flex items-baseline gap-3">
+                <p className="text-4xl font-bold text-primary-600">
+                  {formatPrice(
+                    selectedVariant && selectedVariant.price !== null 
+                      ? selectedVariant.price 
+                      : getDisplayPrice(product)
                   )}
-                </div>
+                </p>
+                {product.promo_price && product.promo_price < product.price && (
+                  <>
+                    <p className="text-2xl text-gray-400 line-through">
+                      {formatPrice(product.price)}
+                    </p>
+                    <span className="text-sm font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded">
+                      Économisez {formatPrice(product.price - getDisplayPrice(product))}
+                    </span>
+                  </>
+                )}
               </div>
+              
+              {/* Variant Selector - Premium Horizontal Layout with Separators */}
+              {variants.length > 0 && (
+                <div className="py-4 border-t border-b border-gray-200">
+                  <ProductVariantSelector
+                    variants={variants}
+                    selectedVariantId={selectedVariantId}
+                    onVariantChange={setSelectedVariantId}
+                    basePrice={getDisplayPrice(product)}
+                    horizontal={true}
+                  />
+                  <p className="text-xs text-gray-500 mt-3">
+                    Vous pouvez choisir une option ci-dessus
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -188,68 +343,140 @@ export function ProductMainSection({
             </div>
           )}
 
-          {/* Bundle Pricing or Quantity Selector */}
-          <div className="space-y-4">
-            {product.bundle_pricing && product.bundle_pricing.length > 0 ? (
-              <>
-                <ProductBundlePricing
-                  bundlePricing={product.bundle_pricing}
-                  regularPrice={product.promo_price && product.promo_price < product.price 
-                    ? product.promo_price 
-                    : product.price}
-                  selectedQuantity={quantity}
-                  onQuantitySelect={setQuantity}
-                  maxQuantity={product.stock}
-                />
-                <div className="pt-2">
-                  <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
-                    <span className="font-medium">Total:</span>
-                    <span className="text-xl font-bold text-primary-600">
-                      {formatPrice(getPriceForQuantity(product, quantity))}
-                    </span>
-                  </div>
+          {/* Bundle Pricing - Show First */}
+          {hasBundlePricing ? (
+            <div className="space-y-4">
+              <ProductBundlePricing
+                bundlePricing={product.bundle_pricing!}
+                regularPrice={product.promo_price && product.promo_price < product.price 
+                  ? product.promo_price 
+                  : product.price}
+                selectedQuantity={quantity}
+                onQuantitySelect={setQuantity}
+                maxQuantity={effectiveStock}
+              />
+              
+              {/* Variant Selectors - Only show when bundle is selected */}
+              {variants.length > 0 && isBundleSelected && (
+                <div className="space-y-4 pt-4 border-t">
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    Choisir les options pour chaque produit ({quantity} {quantity === 1 ? 'produit' : 'produits'})
+                  </h3>
+                  {Array.from({ length: quantity }).map((_, index) => (
+                    <div key={index} className="space-y-2">
+                      <label className="block text-xs font-medium text-gray-600">
+                        Produit {index + 1}:
+                      </label>
+                      <ProductVariantSelector
+                        variants={variants}
+                        selectedVariantId={bundleVariantSelections[index] || null}
+                        onVariantChange={(variantId) => handleBundleVariantChange(index, variantId)}
+                        basePrice={getDisplayPrice(product)}
+                      />
+                    </div>
+                  ))}
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <AddToCartButton product={product} quantity={quantity} className="w-full" />
+              )}
+              
+              {/* Bundle Total and Actions */}
+              {isBundleSelected ? (
+                <>
+                  <div className="pt-2">
+                    <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
+                      <span className="font-medium">Total:</span>
+                      <span className="text-xl font-bold text-primary-600">
+                        {formatPrice(getBundleTotal())}
+                      </span>
+                    </div>
                   </div>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <Button
+                        onClick={handleAddToCartBundle}
+                        disabled={effectiveStock === 0 || (variants.length > 0 && !allBundleVariantsSelected)}
+                        variant="outline"
+                        className="w-full border-2 border-black bg-white text-black hover:bg-gray-50"
+                      >
+                        Ajouter au panier
+                      </Button>
+                    </div>
+                    <Button
+                      onClick={handleBuyNowBundle}
+                      disabled={effectiveStock === 0 || (variants.length > 0 && !allBundleVariantsSelected)}
+                      className="flex-1 bg-black text-white hover:bg-gray-800"
+                    >
+                      Acheter maintenant
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                /* Show standard purchase buttons when bundle pricing exists but no bundle selected */
+                <div className="space-y-3 pt-4 border-t">
+                  {/* Price Display */}
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Prix:</span>
+                      <span className="text-xl font-bold text-primary-600">
+                        {formatPrice(
+                          selectedVariant && selectedVariant.price !== null 
+                            ? selectedVariant.price 
+                            : getDisplayPrice(product)
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Action Buttons */}
                   <Button
                     onClick={handleBuyNow}
-                    disabled={product.stock === 0}
-                    className="flex-1 bg-black text-white hover:bg-gray-800"
+                    disabled={effectiveStock === 0 || (variants.length > 0 && !selectedVariantId)}
+                    className="w-full bg-black text-white hover:bg-gray-800 text-lg py-3"
                   >
                     Acheter maintenant
                   </Button>
+                  
+                  <AddToCartButton 
+                    product={product} 
+                    quantity={quantity} 
+                    variantId={selectedVariantId} 
+                    className="w-full" 
+                  />
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="flex items-end space-x-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Quantité</label>
-                    <QuantitySelector
-                      quantity={quantity}
-                      onQuantityChange={setQuantity}
-                      max={product.stock}
-                      disabled={product.stock === 0}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <AddToCartButton product={product} quantity={quantity} className="w-full" />
-                  </div>
-                </div>
-                
-                {/* Buy Now Button */}
+              )}
+            </div>
+          ) : (
+            /* Non-Bundle: Variants already shown above in price section, just show actions */
+            <div className="space-y-4">
+              {/* Action Buttons - Primary Actions */}
+              <div className="space-y-3">
                 <Button
                   onClick={handleBuyNow}
-                  disabled={product.stock === 0}
-                  className="w-full bg-black text-white hover:bg-gray-800"
+                  disabled={effectiveStock === 0 || (variants.length > 0 && !selectedVariantId)}
+                  className="w-full bg-black text-white hover:bg-gray-800 text-lg py-3"
                 >
                   Acheter maintenant
                 </Button>
-              </>
-            )}
-          </div>
+                
+                <AddToCartButton 
+                  product={product} 
+                  quantity={quantity} 
+                  variantId={selectedVariantId} 
+                  className="w-full" 
+                />
+              </div>
+              
+              {/* Quantity Selector - Secondary, Smaller */}
+              <div className="pt-2 border-t">
+                <label className="block text-xs font-medium text-gray-600 mb-2">Quantité</label>
+                <QuantitySelector
+                  quantity={quantity}
+                  onQuantityChange={setQuantity}
+                  max={effectiveStock}
+                  disabled={effectiveStock === 0}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Payment/Delivery Info */}
           <div className="flex flex-wrap gap-6 pt-4 border-t">

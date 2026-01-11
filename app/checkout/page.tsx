@@ -18,6 +18,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const items = useCartStore(state => state.items)
   const clearCart = useCartStore(state => state.clearCart)
+  const getTotal = useCartStore(state => state.getTotal)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (formData: CheckoutFormData) => {
@@ -25,22 +26,45 @@ export default function CheckoutPage() {
     
     try {
       // Track Facebook Pixel InitiateCheckout event
-      const cartTotal = items.reduce((sum, item) => {
-        if (!item.product) return sum
-        return sum + getPriceForQuantity(item.product, item.quantity)
-      }, 0)
+      const cartTotal = getTotal()
       trackInitiateCheckout(cartTotal)
 
-      // Prepare order items (use bundle pricing or promo price if available)
+      // Prepare order items (use bundle pricing, promo price, or variant price if available)
       const orderItems = items.map(item => {
         if (!item.product) throw new Error('Product data missing')
-        // Calculate total price for this quantity (handles bundle pricing)
-        const totalPrice = getPriceForQuantity(item.product, item.quantity)
+        
+        // Handle bundle items
+        if (item.is_bundle && item.bundle_price !== undefined) {
+          const pricePerUnit = item.bundle_price
+          // Build product name with bundle info and variant selections
+          let productName = item.product.name
+          if (item.bundle_quantity) {
+            productName += ` (Pack de ${item.bundle_quantity})`
+          }
+          if (item.bundle_variant_selections && item.bundle_variant_selections.length > 0) {
+            const variantNames = item.bundle_variant_selections.map(s => s.variant_name).join(', ')
+            productName += ` - ${variantNames}`
+          }
+          return {
+            product_id: item.product_id,
+            product_name: productName,
+            product_price: pricePerUnit,
+            quantity: item.quantity,
+          }
+        }
+        
+        // Handle regular items
+        // Calculate total price for this quantity (handles variants)
+        const totalPrice = getPriceForQuantity(item.product, item.quantity, item.variant || null)
         // Store the effective price per unit (total / quantity)
         const pricePerUnit = totalPrice / item.quantity
+        // Include variant name in product name if variant is selected
+        const productName = item.variant 
+          ? `${item.product.name} - ${item.variant.name}`
+          : item.product.name
         return {
           product_id: item.product_id,
-          product_name: item.product.name,
+          product_name: productName,
           product_price: pricePerUnit,
           quantity: item.quantity,
         }

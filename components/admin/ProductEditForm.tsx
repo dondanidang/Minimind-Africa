@@ -7,6 +7,7 @@ import { PageContentEditor } from '@/components/admin/PageContentEditor'
 import { FileUploader } from '@/components/admin/FileUploader'
 import { AssetsGallery } from '@/components/admin/AssetsGallery'
 import type { ProductPageContent } from '@/types/productPageContent'
+import type { ProductVariant } from '@/types/product'
 
 interface ProductEditFormProps {
   productId: string
@@ -21,6 +22,7 @@ interface ProductEditFormProps {
     images: string
     assets: string[]
     bundle_pricing: Array<{ quantity: number; price: number }>
+    variants: ProductVariant[]
     page_content: ProductPageContent | null
   }
   onFormDataChange: (data: any) => void
@@ -39,9 +41,13 @@ export function ProductEditForm({
 }: ProductEditFormProps) {
   const [bundleQuantity, setBundleQuantity] = useState('')
   const [bundlePrice, setBundlePrice] = useState('')
+  const [variantName, setVariantName] = useState('')
+  const [variantPrice, setVariantPrice] = useState('')
+  const [variantStock, setVariantStock] = useState('')
   const [expandedSections, setExpandedSections] = useState({
     basic: true,
     pricing: true,
+    variants: false,
     images: true,
     assets: true,
     content: false,
@@ -71,6 +77,35 @@ export function ProductEditForm({
     onFormDataChange({
       ...formData,
       bundle_pricing: formData.bundle_pricing.filter((_, i) => i !== index),
+    })
+  }
+
+  const addVariant = () => {
+    const price = variantPrice ? parseFloat(variantPrice) : null
+    const stock = parseInt(variantStock) || 0
+    if (variantName.trim()) {
+      const newVariant: ProductVariant = {
+        id: `temp-${Date.now()}`,
+        product_id: productId,
+        name: variantName.trim(),
+        price,
+        stock,
+        created_at: new Date().toISOString(),
+      }
+      onFormDataChange({
+        ...formData,
+        variants: [...formData.variants, newVariant],
+      })
+      setVariantName('')
+      setVariantPrice('')
+      setVariantStock('')
+    }
+  }
+
+  const removeVariant = (variantId: string) => {
+    onFormDataChange({
+      ...formData,
+      variants: formData.variants.filter(v => v.id !== variantId),
     })
   }
 
@@ -275,6 +310,88 @@ export function ProductEditForm({
                 )}
               </div>
             </div>
+          </div>
+        )}
+      </div>
+
+      {/* Product Variants */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <SectionHeader 
+          title="Product Variants" 
+          section="variants"
+          count={formData.variants.length}
+        />
+        {expandedSections.variants && (
+          <div className="p-6 border-t border-gray-200 space-y-6">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Variant Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={variantName}
+                    onChange={(e) => setVariantName(e.target.value)}
+                    placeholder="e.g., Small, Red, 500g"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Price (XOF) - Optional
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={variantPrice}
+                    onChange={(e) => setVariantPrice(e.target.value)}
+                    placeholder="Leave empty to use product price"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Stock *
+                  </label>
+                  <input
+                    type="number"
+                    value={variantStock}
+                    onChange={(e) => setVariantStock(e.target.value)}
+                    placeholder="0"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              <Button type="button" onClick={addVariant} variant="outline" className="w-full sm:w-auto">
+                Add Variant
+              </Button>
+            </div>
+            {formData.variants.length > 0 && (
+              <div className="space-y-2 mt-4">
+                {formData.variants.map((variant) => (
+                  <div key={variant.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-gray-700">{variant.name}</span>
+                      <div className="flex gap-4 mt-1 text-xs text-gray-600">
+                        <span>Price: {variant.price !== null ? formatPrice(variant.price) : 'Product price'}</span>
+                        <span>Stock: {variant.stock}</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeVariant(variant.id)}
+                      className="text-red-600 hover:text-red-800 text-sm font-medium"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <p className="text-xs text-gray-500">
+              Variants allow customers to choose different options (size, color, etc.) for this product.
+            </p>
           </div>
         )}
       </div>

@@ -8,17 +8,27 @@ export async function GET(
 ) {
   try {
     const supabase = await createClient()
-    const { data, error } = await supabase
+    const { data: product, error: productError } = await supabase
       .from('products')
       .select('*')
       .eq('slug', params.slug)
       .single()
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 404 })
+    if (productError) {
+      return NextResponse.json({ error: productError.message }, { status: 404 })
     }
 
-    return NextResponse.json(data as Product)
+    // Fetch variants
+    const { data: variants } = await supabase
+      .from('product_variants')
+      .select('*')
+      .eq('product_id', product.id)
+      .order('created_at', { ascending: true })
+
+    return NextResponse.json({
+      ...product,
+      variants: variants || [],
+    } as Product)
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },

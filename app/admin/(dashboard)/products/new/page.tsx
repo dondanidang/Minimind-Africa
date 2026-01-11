@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ProductEditForm } from '@/components/admin/ProductEditForm'
 import type { ProductPageContent } from '@/types/productPageContent'
+import type { ProductVariant } from '@/types/product'
 
 export default function NewProductPage() {
   const router = useRouter()
@@ -21,6 +22,7 @@ export default function NewProductPage() {
     images: '' as string,
     assets: [] as string[],
     bundle_pricing: [] as Array<{ quantity: number; price: number }>,
+    variants: [] as ProductVariant[],
     page_content: null as ProductPageContent | null,
   })
   // Generate temporary ID for file uploads before product is created
@@ -63,14 +65,35 @@ export default function NewProductPage() {
         updated_at: new Date().toISOString(),
       }
 
-      const { error } = await supabase
+      const { data: newProduct, error } = await supabase
         .from('products')
         .insert(insertData)
+        .select()
+        .single()
 
       if (error) {
         console.error('Error creating product:', error)
         alert(error.message || 'Error creating product')
         return
+      }
+
+      // Insert variants if any
+      if (formData.variants.length > 0) {
+        const variantsToInsert = formData.variants.map(variant => ({
+          product_id: newProduct.id,
+          name: variant.name,
+          price: variant.price,
+          stock: variant.stock,
+        }))
+
+        const { error: variantsError } = await supabase
+          .from('product_variants')
+          .insert(variantsToInsert)
+
+        if (variantsError) {
+          console.error('Error creating variants:', variantsError)
+          alert(`Product created successfully, but failed to save variants: ${variantsError.message}`)
+        }
       }
 
       router.push('/admin/products')

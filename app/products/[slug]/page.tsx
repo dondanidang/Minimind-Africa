@@ -16,13 +16,25 @@ import type { Review } from '@/types/review'
 
 async function getProductBySlug(slug: string): Promise<Product | null> {
   const supabase = await createClient()
-  const { data } = await supabase
+  const { data: product } = await supabase
     .from('products')
     .select('*')
     .eq('slug', slug)
     .single()
 
-  return data as Product | null
+  if (!product) return null
+
+  // Fetch variants
+  const { data: variants } = await supabase
+    .from('product_variants')
+    .select('*')
+    .eq('product_id', product.id)
+    .order('created_at', { ascending: true })
+
+  return {
+    ...product,
+    variants: variants || [],
+  } as Product
 }
 
 async function getProductReviews(productId: string): Promise<Review[]> {
