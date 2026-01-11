@@ -86,21 +86,11 @@ export function ProductMainSection({
     setSelectedVariantId(variantId)
   }
 
-  // Reset and select first variant when product changes or on mount
+  // Reset selection when product changes
   useEffect(() => {
-    // Reset selection when product changes
     setSelectedVariantId(null)
-    
-    // Select first variant by default (when no bundle is selected)
-    // This applies to both products with and without bundle pricing
-    if (!isBundleSelected && variants.length > 0) {
-      const firstAvailableVariant = variants.find(v => v.stock > 0) || variants[0]
-      if (firstAvailableVariant) {
-        setSelectedVariantId(firstAvailableVariant.id)
-      }
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product.id, variants.length, isBundleSelected])
+  }, [product.id])
 
   const selectedVariant = selectedVariantId ? variants.find(v => v.id === selectedVariantId) : null
 
