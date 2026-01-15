@@ -13,6 +13,7 @@ import { ProductBundlePricing } from './ProductBundlePricing'
 import type { Product } from '@/types/product'
 import type { Review } from '@/types/review'
 import type { ProductPageContent } from '@/types/productPageContent'
+import { trackAddToCart, trackViewContent } from '@/lib/analytics'
 
 interface ProductMainSectionProps {
   product: Product
@@ -39,6 +40,15 @@ export function ProductMainSection({
   useEffect(() => {
     setUrgencyCount(Math.floor(Math.random() * (20 - 5 + 1)) + 5)
   }, [])
+  
+  // Track ViewContent when product page opens
+  useEffect(() => {
+    trackViewContent({
+      name: product.name,
+      price: getDisplayPrice(product),
+      id: product.id,
+    })
+  }, [product.id, product.name])
   
   const router = useRouter()
   const addItem = useCartStore(state => state.addItem)
@@ -149,6 +159,9 @@ export function ProductMainSection({
     
     // Add bundle as a single cart item
     addBundle(product, quantity, bundleTotal, variantSelections)
+    
+    // Track Facebook Pixel AddToCart event
+    trackAddToCart({ name: product.name, price: bundleTotal }, quantity)
   }
 
   const handleBuyNowBundle = () => {

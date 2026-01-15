@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { formatPrice } from '@/lib/utils'
+import { trackInitiatePayment } from '@/lib/analytics'
 import { PaymentMethod, type PaymentMethodType } from '@/components/checkout/PaymentMethod'
 import type { Order, OrderItem } from '@/types/order'
 
@@ -50,6 +51,9 @@ function PaymentPageContent() {
 
     setIsCreatingPayment(true)
     try {
+      // Track Facebook Pixel InitiatePayment event
+      trackInitiatePayment(order.total, 'XOF', order.order_number)
+      
       // Create Jeko payment request
       const response = await fetch('/api/payments/jeko/create-request', {
         method: 'POST',

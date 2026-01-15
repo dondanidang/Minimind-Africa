@@ -37,6 +37,28 @@ export function trackInitiateCheckout(value: number, currency: string = 'XOF') {
   }
 }
 
+export function trackInitiatePayment(value: number, currency: string = 'XOF', orderId?: string) {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'InitiatePayment', {
+      value,
+      currency,
+      ...(orderId && { content_name: orderId }),
+    })
+  }
+}
+
+export function trackViewContent(product: { name: string; price: number; id?: string }, currency: string = 'XOF') {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'ViewContent', {
+      content_name: product.name,
+      content_type: 'product',
+      content_ids: product.id ? [product.id] : undefined,
+      value: product.price,
+      currency,
+    })
+  }
+}
+
 declare global {
   interface Window {
     fbq: (...args: any[]) => void

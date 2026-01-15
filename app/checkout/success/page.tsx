@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { trackPurchase } from '@/lib/analytics'
 
 function SuccessContent() {
   const searchParams = useSearchParams()
@@ -11,15 +12,40 @@ function SuccessContent() {
   const orderId = searchParams.get('order')
   const [verifying, setVerifying] = useState(true)
   const [verified, setVerified] = useState(false)
+  const [purchaseTracked, setPurchaseTracked] = useState(false)
 
   useEffect(() => {
     // Verify payment status via API
-    if (orderId) {
+    if (orderId && !purchaseTracked) {
       fetch(`/api/orders/${orderId}`)
         .then(res => res.json())
         .then(data => {
           if (data.order && data.order.payment_status === 'paid') {
             setVerified(true)
+            
+            // Track Facebook Pixel Purchase event when payment is confirmed
+            // This fires when user returns to site after payment (or webhook received)
+            // Only track once per page load
+            if (!purchaseTracked) {
+              const order = data.order
+              const orderItems = data.order.order_items || []
+              
+              const items = orderItems.map((item: any) => ({
+                name: item.product_name,
+                price: item.product_price,
+                quantity: item.quantity,
+              }))
+              
+              trackPurchase(
+                {
+                  total: order.total,
+                  order_number: order.order_number,
+                },
+                items
+              )
+              
+              setPurchaseTracked(true)
+            }
           }
           setVerifying(false)
         })
@@ -29,7 +55,7 @@ function SuccessContent() {
     } else {
       setVerifying(false)
     }
-  }, [orderId])
+  }, [orderId, purchaseTracked])
 
   return (
     <div className="container mx-auto px-4 py-12">
