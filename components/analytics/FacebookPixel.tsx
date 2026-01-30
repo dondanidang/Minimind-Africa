@@ -2,45 +2,46 @@
 
 import Script from 'next/script'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID
 
 export function FacebookPixel() {
   const pathname = usePathname()
+  const initialPathRef = useRef<string | null>(null)
+  const [shouldLoad, setShouldLoad] = useState(false)
+
+  // Skip on localhost - fbevents.js is typically blocked by ad blockers/privacy extensions in dev
+  useEffect(() => {
+    const isLocalhost = /^localhost(:\d+)?$|^127\.0\.0\.1(:\d+)?$/.test(window.location?.host ?? '')
+    setShouldLoad(!isLocalhost)
+  }, [])
 
   useEffect(() => {
     if (!FB_PIXEL_ID || typeof window === 'undefined') return
 
-    // Track PageView on route changes (SPA navigation)
-    // Initial load is handled by the inline script
-    if (pathname && window.fbq) {
+    // Track PageView on route changes (SPA navigation only - skip initial load)
+    if (pathname && initialPathRef.current !== null && initialPathRef.current !== pathname && window.fbq) {
       window.fbq('track', 'PageView')
     }
+    if (initialPathRef.current === null) initialPathRef.current = pathname ?? null
   }, [pathname])
 
-  if (!FB_PIXEL_ID) {
+  if (!FB_PIXEL_ID || !shouldLoad) {
     return null
   }
 
   return (
     <>
       <Script
-        id="facebook-pixel"
+        id="fb-pixel"
+        src="https://connect.facebook.net/en_US/fbevents.js"
         strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${FB_PIXEL_ID}');
-            fbq('track', 'PageView');
-          `,
+        onLoad={() => {
+          if (typeof window.fbq === 'function') {
+            window.fbq('init', FB_PIXEL_ID!)
+            window.fbq('track', 'PageView')
+          }
         }}
       />
       <noscript>

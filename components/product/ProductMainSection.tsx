@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { ProductGallery } from './ProductGallery'
 import { QuantitySelector } from './QuantitySelector'
 import { AddToCartButton } from './AddToCartButton'
@@ -41,14 +41,19 @@ export function ProductMainSection({
     setUrgencyCount(Math.floor(Math.random() * (20 - 5 + 1)) + 5)
   }, [])
   
-  // Track ViewContent when product page opens
+  const pathname = usePathname()
+  
+  // Track ViewContent when product page opens or navigates to different product
   useEffect(() => {
-    trackViewContent({
-      name: product.name,
-      price: getDisplayPrice(product),
-      id: product.id,
-    })
-  }, [product.id, product.name])
+    // Only track if we're on a product page and pixel is available
+    if (typeof window !== 'undefined' && typeof window.fbq === 'function' && pathname?.startsWith('/products/')) {
+      trackViewContent({
+        name: product.name,
+        price: getDisplayPrice(product),
+        id: product.id,
+      })
+    }
+  }, [product.id, product.name, pathname])
   
   const router = useRouter()
   const addItem = useCartStore(state => state.addItem)
